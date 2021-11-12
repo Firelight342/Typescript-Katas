@@ -3,7 +3,7 @@ import { fizzbuzz } from "../src/FizzBuzz";
 const chai = require("chai");
 const expect = chai.expect;
 
-describe("Hello Tests", () => {
+describe("FizzBuzz Tests", () => {
 
   it("returns numbers 1, 2, and 4 return without change", () => {
     expect(fizzbuzz(1)).equal("1");
@@ -29,5 +29,18 @@ describe("Hello Tests", () => {
     expect(fizzbuzz(15)).equal("FizzBuzz");
     expect(fizzbuzz(30)).equal("FizzBuzz");
   });
-  
+
+  it("converts numbers with a 3 into Fizz", () => {
+    expect(fizzbuzz(13)).equal("Fizz");
+    expect(fizzbuzz(131)).equal("Fizz");
+  });
+
+
+  it("converts numbers with a 5 into Buzz", () => {
+    expect(fizzbuzz(52)).equal("Buzz");
+    expect(fizzbuzz(151)).equal("Buzz");
+  });
+
+
+
 });
