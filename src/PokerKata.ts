@@ -50,7 +50,6 @@ export function parseCard(s:string):Card {
     return { suit:suit, value:cardValue};
 }
 
-
 export function parseHand(handString :string) : Card[] {
     let stringArray = handString.split(" ");
     let hand = [];
@@ -59,14 +58,4 @@ export function parseHand(handString :string) : Card[] {
         hand.push(card);
     }
     return hand;
-}
-
-export function splitAndAdd1(numberList: string): number[] {
-    let numberArray = numberList.split(",");
-    let numbers = [];
-    for(let n of numberArray){
-        let newNum = parseInt(n) +1 ;
-        numbers.push(newNum);
-    }
-    return numbers;
 }
