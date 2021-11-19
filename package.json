@@ -5,8 +5,8 @@
   "license": "MIT",
   "scripts": {
     "build": "npm run build-ts && npm run tslint",
-    "test": "jest --forceExit --verbose",
-    "test-coverage": "jest --forceExit --coverage --verbose",
+    "test": "jest --forceExit --verbose=false",
+    "test-coverage": "jest --forceExit --coverage --verbose=false",
     "watch-test": "npm run test -- --watchAll",
     "build-ts": "tsc",
     "watch-ts": "tsc -w",

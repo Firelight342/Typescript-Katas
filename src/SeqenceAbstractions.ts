@@ -12,7 +12,7 @@ function map(inputArray:any, func: any) : any {
     let outputArray = [];
     for(let n of inputArray){
         let newNum = func(n);
-        outputArray .push(newNum);
+        outputArray.push(newNum);
     }
     return outputArray;
 }
@@ -30,10 +30,35 @@ function turnWordIntoStars(word:string):string {
 }
 
 export function countWordSizesVisually(input:string):string{
+    let stringArray = input.split("");
+    let output = stringArray.map(char => {
+        if(char === " "){
+            return "\n";
+        } else {
+            return "*";
+        }
+    }) 
+    return output.join("");
+}
+
+export function countWordSizesVisually2(input:string):string{
     let stringArray = input.split(" ");
     let output = stringArray.map(word => turnWordIntoStars(word));
     return output.join("\n");
 }
+
+export function histogramLetters(input:string):string{
+    let letterHistogram:any ={"a":"","b":"","c":"","d":""};
+    let letters = input.split("");
+    let output = letters.map(letter => {
+        letterHistogram[letter] += "*";
+    });
+    let histogramDisplayLine = Object.keys(letterHistogram)
+        .map(letter => letter + ": " + letterHistogram[letter]);
+    return histogramDisplayLine.join("\n");
+}
+
+// console.log(histogramLetters("abccccddddaaaccgggd"))
 
 export function add5(numberArray:number[]): number[]  {
     let numbers = numberArray.map(num => num + 5);

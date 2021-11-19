@@ -1,9 +1,14 @@
-import {  add5,  countWordSizesVisually, countWordSizes,  capAllTheWords, splitAndAdd1, splitAndAdd1WithMap } from "../src/SeqenceAbstractions";
+import {   histogramLetters, add5,  countWordSizesVisually, countWordSizes,  capAllTheWords, splitAndAdd1, splitAndAdd1WithMap } from "../src/SeqenceAbstractions";
 
 const chai = require("chai");
 const expect = chai.expect;
 
 describe("Sequence abstraction Tests", () => {
+
+  it("display histogram of letters", () => {
+    let sizes = histogramLetters("abccccddddaaaccd")
+    expect(sizes).equals("a: ****\nb: *\nc: ******\nd: *****");
+  });
 
     // ****
     // ***
@@ -45,6 +50,5 @@ describe("Sequence abstraction Tests", () => {
     let allWordsCapped = capAllTheWords("steve was here")
     expect(allWordsCapped).equals("Steve Was Here");
   });
-
 
 });
