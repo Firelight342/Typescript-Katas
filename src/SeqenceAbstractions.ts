@@ -78,13 +78,18 @@ export function capAllTheWords(input:string) :string {
     return words.join(" ");
 }
 
-export function capAllTheWordsWithFor(input:string) :string {
+export function capAllTheWordsWithForOG(input:string) :string {
     let stringArray = input.split(" ");
     let words = [];
     for(let word of stringArray){
         let newWord = word.charAt(0).toUpperCase() + word.slice(1);
         words.push(newWord);
     }
-
     return words.join(" ");
+}
+
+export function capAllTheWordsWithFor(input:string) :string {
+    let words = input.split(" ");
+    let letters = words.map(letter => letter.charAt(0).toUpperCase() + letter.slice(1));
+    return letters.join(" ");
 }

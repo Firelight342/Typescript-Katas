@@ -1,4 +1,4 @@
-import {   histogramLetters, add5,  countWordSizesVisually, countWordSizes,  capAllTheWords, splitAndAdd1, splitAndAdd1WithMap } from "../src/SeqenceAbstractions";
+import {   histogramLetters, add5,  countWordSizesVisually, countWordSizes,  capAllTheWords, splitAndAdd1, splitAndAdd1WithMap, capAllTheWordsWithFor } from "../src/SeqenceAbstractions";
 
 const chai = require("chai");
 const expect = chai.expect;
@@ -51,4 +51,8 @@ describe("Sequence abstraction Tests", () => {
     expect(allWordsCapped).equals("Steve Was Here");
   });
 
+  it("capitalize every word", () => {
+    let allWordsCapped = capAllTheWordsWithFor("steve was here")
+    expect(allWordsCapped).equals("Steve Was Here");
+  });
 });
