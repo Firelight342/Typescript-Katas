@@ -8,3 +8,6 @@ git add
 git add . (for adding all)
 git commit -m "Your Message Here"
 git push
+
+To print into the terminal:
+console.log()

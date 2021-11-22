@@ -41,16 +41,93 @@ export function countWordSizesVisually(input:string):string{
     return output.join("");
 }
 
+
 export function countWordSizesVisually2(input:string):string{
     let stringArray = input.split(" ");
     let output = stringArray.map(word => turnWordIntoStars(word));
     return output.join("\n");
 }
 
-export function histogramLetters(input:string):string{
-    let letterHistogram:any ={"a":"","b":"","c":"","d":""};
+export function mapWithReduce(input: number[], fn:(x:number) =>number):number[]{
+    return input.reduce((acc:number[], next) => {
+        acc.push(fn(next));
+        return acc;
+    }, []);
+}
+
+// map      ->     [1,2,3] -> (x => x + 1)              -> [2,3,4]
+// reduce   ->     [1,2,3] -> (acc, x => acc + x) -> "" -> "123"
+export function sumUp(input: number[]):number{
+    return input.reduce((sum, num) => {
+        //console.log(sum, " " ,num)
+        return sum + num; 
+    }, 0);
+}
+
+export function concatDouble(input: number[]): number[]{
+    let doubledArray = input.reduce((acc:number[], next) => {
+        acc.push(next)
+        acc.push(next)
+        return acc;
+    },[])
+    return doubledArray;
+}
+
+export function concatX(numbers: number[], multiplier: number): number[]{
+    let doubledArray = numbers.reduce((acc:number[], next) => {
+        for(let x = 0; x < multiplier; x++) {
+            acc.push(next)
+        }
+        return acc;
+    },[])
+    return doubledArray;
+}
+
+export function homemadeJoin(words:string[], separater:string){
+    let joinedString = words.reduce((acc:any, next, index) => {
+        console.log(acc,next, index)
+        if (words.length === index + 1){
+            acc = acc + next;
+        }else{
+            acc = acc + next + separater;
+        }
+        return acc;
+    },"") 
+    return joinedString;
+}
+
+export function countLetters(input:string){
     let letters = input.split("");
-    let output = letters.map(letter => {
+    let letterCounts = letters.reduce((acc:any,next) => {
+        if (acc[next]) {
+            acc[next] += 1
+        } else {
+            acc[next] = 1
+        }
+        return acc;
+    }, {})
+    return letterCounts;
+}
+
+
+export function histogramLetters(input:string):string{
+    let letters = input.split("");
+
+    let letterHistogram:any = 
+        letters.reduce((letterHistogram:any,letter) => {
+            letterHistogram[letter] += "*";
+            return letterHistogram;
+        }, {"a":"","b":"","c":"","d":""});
+
+    let histogramDisplayLine = Object.keys(letterHistogram)
+        .map(letter => letter + ": " + letterHistogram[letter]);
+    return histogramDisplayLine.join("\n");
+}
+
+export function histogramLetters2(input:string):string{
+    let letters = input.split("");
+    let letterHistogram:any ={"a":"","b":"","c":"","d":""};
+    letters.map(letter => {
         letterHistogram[letter] += "*";
     });
     let histogramDisplayLine = Object.keys(letterHistogram)
@@ -88,7 +165,7 @@ export function capAllTheWordsWithForOG(input:string) :string {
     return words.join(" ");
 }
 
-export function capAllTheWordsWithFor(input:string) :string {
+export function capAllTheWordsWithMap(input:string) :string {
     let words = input.split(" ");
     let letters = words.map(letter => letter.charAt(0).toUpperCase() + letter.slice(1));
     return letters.join(" ");

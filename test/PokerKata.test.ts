@@ -1,4 +1,4 @@
-import { Suit, parseCard, parseHand} from "../src/PokerKata";
+import { Suit, parseCard, parseHand, parseHandMap} from "../src/PokerKata";
 
 const chai = require("chai");
 const expect = chai.expect;
@@ -42,6 +42,13 @@ describe("PokerKata Tests", () => {
 
   it("can parse cards in a hand", () => {
     let hand = parseHand("2H 3D 5S 9C KD")
+    expect(hand[0].suit).equals(Suit.Hearts);
+    expect(hand[2].suit).equals(Suit.Spades);
+    expect(hand[4].value).equals(13);
+  });
+
+  it("can parse cards in a hand with map", () => {
+    let hand = parseHandMap("2H 3D 5S 9C KD")
     expect(hand[0].suit).equals(Suit.Hearts);
     expect(hand[2].suit).equals(Suit.Spades);
     expect(hand[4].value).equals(13);

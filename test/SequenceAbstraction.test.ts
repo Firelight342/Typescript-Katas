@@ -1,9 +1,39 @@
-import {   histogramLetters, add5,  countWordSizesVisually, countWordSizes,  capAllTheWords, splitAndAdd1, splitAndAdd1WithMap, capAllTheWordsWithFor } from "../src/SeqenceAbstractions";
+import { sumUp, mapWithReduce, homemadeJoin, countLetters, concatX, concatDouble, histogramLetters, add5,  countWordSizesVisually, countWordSizes,  capAllTheWords, splitAndAdd1, splitAndAdd1WithMap, capAllTheWordsWithMap } from "../src/SeqenceAbstractions";
 
 const chai = require("chai");
 const expect = chai.expect;
 
 describe("Sequence abstraction Tests", () => {
+  
+  it("can turn array into string", () => {
+    let numberString = sumUp([1,2,3,1,7])
+    expect(numberString).equals(14);
+  });
+
+  it("recreate map", () => {
+    let sizes = mapWithReduce([1, 2, 3], x => x+ 1)
+    expect(sizes).to.deep.equal([2, 3, 4]);
+  });
+
+  it("recreate array join", () => {
+    let sizes = homemadeJoin(["1", "2", "3"], ",")
+    expect(sizes).equals("1,2,3");
+  });
+
+  it("count letters can correctly count each letter", () => {
+    let sizes = countLetters("abcaaadf")
+    expect(sizes).to.deep.equal({"a": 4, "b": 1, "c": 1, "d": 1, "f": 1});
+  });
+
+  it("concatX X's the size of the arrray", () => {
+    let sizes = concatX([1,2,3], 3)
+    expect(sizes).to.deep.equal([1,1,1,2,2,2,3,3,3]);
+  });
+
+  it("concat double doubles the size of the arrray", () => {
+    let sizes = concatDouble([1,2,3])
+    expect(sizes).to.deep.equal([1,1,2,2,3,3]);
+  });
 
   it("display histogram of letters", () => {
     let sizes = histogramLetters("abccccddddaaaccd")
@@ -52,7 +82,7 @@ describe("Sequence abstraction Tests", () => {
   });
 
   it("capitalize every word", () => {
-    let allWordsCapped = capAllTheWordsWithFor("steve was here")
+    let allWordsCapped = capAllTheWordsWithMap("steve was here")
     expect(allWordsCapped).equals("Steve Was Here");
   });
 });
