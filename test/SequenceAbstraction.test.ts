@@ -1,9 +1,31 @@
-import { sumUp, mapWithReduce, homemadeJoin, countLetters, concatX, concatDouble, histogramLetters, add5,  countWordSizesVisually, countWordSizes,  capAllTheWords, splitAndAdd1, splitAndAdd1WithMap, capAllTheWordsWithMap } from "../src/SeqenceAbstractions";
+import { onlyEvens, reduceFilter, sumUp, mapWithReduce, homemadeJoin, countLetters, concatX, concatDouble, histogramLetters, add5,  countWordSizesVisually, countWordSizes,  capAllTheWords, splitAndAdd1, splitAndAdd1WithMap, capAllTheWordsWithMap } from "../src/SeqenceAbstractions";
 
 const chai = require("chai");
 const expect = chai.expect;
 
 describe("Sequence abstraction Tests", () => {
+
+  it("number less than 7", () => {
+    let input = [1,2,3,45,6,7];
+    let output = input.filter(x => x <7);
+    expect(output).to.deep.equal([1,2,3,6]);
+  });
+
+  it("return strings longer than 4", () => {
+    let input = ["steve", "sam", "sammy"];
+    let output = input.filter(x => x.length > 4)
+    expect(output).to.deep.equal(["steve", "sammy"]);
+  });
+
+  it("reduceFilter can accept aribrary filter lambdas", () => {
+    let numberString = reduceFilter([1,2,3,4,5,6], (x)=>x%2===1)
+    expect(numberString).to.deep.equal([1,3,5]);
+  });
+
+  it("onlyEvens can filter only evens", () => {
+    let numberString = onlyEvens([1,2,3,4,5,6])
+    expect(numberString).to.deep.equal([2,4,6]);
+  });
   
   it("can turn array into string", () => {
     let numberString = sumUp([1,2,3,1,7])

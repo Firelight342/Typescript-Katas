@@ -62,7 +62,7 @@ export function parseHand(handString :string) : Card[] {
 
 export function parseHandMap (handString :string) :Card[] {
     let cards = handString.split(" ");
-    let hand= cards.map(card => parseCard(card));
+    let hand = cards.map(card => parseCard(card));
     //console.log(hand)
     return hand;
 }

@@ -55,13 +55,32 @@ export function mapWithReduce(input: number[], fn:(x:number) =>number):number[]{
     }, []);
 }
 
-// map      ->     [1,2,3] -> (x => x + 1)              -> [2,3,4]
-// reduce   ->     [1,2,3] -> (acc, x => acc + x) -> "" -> "123"
-export function sumUp(input: number[]):number{
-    return input.reduce((sum, num) => {
-        //console.log(sum, " " ,num)
-        return sum + num; 
-    }, 0);
+export function sumUp(numbers: number[]):number{
+    let sum = numbers.reduce((acc:any, next)=>{
+        acc= acc+next;
+        return acc;
+    },0)
+    return sum;
+}
+
+export function onlyEvens(numbers: number[]): number[]{
+    let evens = numbers.reduce((acc:any, next)=>{
+        if (next % 2 === 0){
+            acc.push(next);
+        }
+        return acc;
+    },[])
+    return evens;
+}
+
+export function reduceFilter(numbers: number[], fn:(x:number) => boolean): number[]{
+    let filteredList = numbers.reduce((acc:any, next)=>{
+        if (fn(next)){
+            acc.push(next);
+        }
+        return acc;
+    },[])
+    return filteredList;
 }
 
 export function concatDouble(input: number[]): number[]{
@@ -85,7 +104,7 @@ export function concatX(numbers: number[], multiplier: number): number[]{
 
 export function homemadeJoin(words:string[], separater:string){
     let joinedString = words.reduce((acc:any, next, index) => {
-        console.log(acc,next, index)
+        //console.log(acc,next, index)
         if (words.length === index + 1){
             acc = acc + next;
         }else{
