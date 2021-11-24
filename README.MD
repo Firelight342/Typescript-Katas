@@ -11,3 +11,22 @@ git push
 
 To print into the terminal:
 console.log()
+
+
+
+
+
+
+
+
+
+export function parseHandMap (handString :string) :Card[] {
+    let cards = handString.split(" ");
+    let hand= cards.map(card => parseCard(card));
+    //console.log(hand)
+    return hand;
+}
+
+export function parseHandMap (handString :string) :Card[] {
+    return handString.split(" ").map(card => parseCard(card));
+}

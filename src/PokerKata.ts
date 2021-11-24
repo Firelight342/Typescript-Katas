@@ -47,22 +47,26 @@ function parseValue(valueString:string):number{
 export function parseCard(s:string):Card {
     var suit = parseSuit(s[1]);
     var cardValue = parseValue(s[0]);
-    return { suit:suit, value:cardValue};
+    return { suit:suit, value:cardValue };
 }
 
 export function parseHand(handString :string) : Card[] {
-    let stringArray = handString.split(" ");
-    let hand = [];
-    for(let str of stringArray){
-        let card = parseCard(str);
-        hand.push(card);
-    }
+    let cards = handString.split(" ");
+    let hand = cards.map(card => parseCard(card));
     return hand;
 }
 
-export function parseHandMap (handString :string) :Card[] {
-    let cards = handString.split(" ");
-    let hand = cards.map(card => parseCard(card));
-    //console.log(hand)
-    return hand;
+export function isPair(hand:Card[]):boolean{
+    let numbers = hand.map((card:Card) => card.value);
+    let numberCounts = numbers.reduce((acc:any,next) => {
+        if (acc[next]) {
+            acc[next] += 1
+        } else {
+            acc[next] = 1
+        }
+        return acc;
+    }, {});
+    let allPairs = Object.values(numberCounts).filter(x => x === 2);
+    let isPair= allPairs.length === 1;
+    return isPair; 
 }
