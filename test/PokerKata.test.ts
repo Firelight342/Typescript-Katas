@@ -1,4 +1,4 @@
-import { Card, isPair, Suit, parseCard, parseHand} from "../src/PokerKata";
+import { Card, isPair, Suit, parseCard, parseHand } from "../src/PokerKata";
 
 const chai = require("chai");
 const expect = chai.expect;
@@ -23,7 +23,7 @@ describe("PokerKata Tests", () => {
     expect(parseCard("JH").value).equal(11);
     expect(parseCard("QH").value).equal(12);
     expect(parseCard("KH").value).equal(13);
-      
+
   });
 
   it("can correctly parse a cards suit", () => {
@@ -48,33 +48,31 @@ describe("PokerKata Tests", () => {
   });
 
   it("can detect a pair", () => {
-    let hand :Card[] = [
-      {suit: Suit.Clubs, value: 2},
-      {suit: Suit.Clubs, value: 2},
-      {suit: Suit.Clubs, value: 3},
-      {suit: Suit.Clubs, value: 4},
-      {suit: Suit.Clubs, value: 5}
+    let hand: Card[] = [
+      { suit: Suit.Clubs, value: 2 },
+      { suit: Suit.Clubs, value: 2 },
+      { suit: Suit.Clubs, value: 3 },
+      { suit: Suit.Clubs, value: 4 },
+      { suit: Suit.Clubs, value: 5 }
     ]
- 
+
     let isAPair = isPair(hand);
 
     expect(isAPair).equals(true);
   });
 
   it("can detect not a pair", () => {
-    let hand :Card[] = [
-      {suit: Suit.Clubs, value: 1},
-      {suit: Suit.Clubs, value: 2},
-      {suit: Suit.Clubs, value: 3},
-      {suit: Suit.Clubs, value: 4},
-      {suit: Suit.Clubs, value: 5}
+    let hand: Card[] = [
+      { suit: Suit.Clubs, value: 1 },
+      { suit: Suit.Clubs, value: 2 },
+      { suit: Suit.Clubs, value: 3 },
+      { suit: Suit.Clubs, value: 4 },
+      { suit: Suit.Clubs, value: 5 }
     ]
- 
+
     let isAPair = isPair(hand);
 
     expect(isAPair).equals(false);
   });
-
-
 
 });

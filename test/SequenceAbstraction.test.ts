@@ -1,4 +1,4 @@
-import { onlyEvens, reduceFilter, sumUp, mapWithReduce, homemadeJoin, countLetters, concatX, concatDouble, histogramLetters, add5,  countWordSizesVisually, countWordSizes,  capAllTheWords, splitAndAdd1, splitAndAdd1WithMap, capAllTheWordsWithMap } from "../src/SeqenceAbstractions";
+import { onlyEvens, reduceFilter, sumUp, mapWithReduce, homemadeJoin, countLetters, concatX, concatDouble, histogramLetters, add5, countWordSizesVisually, countWordSizes, capAllTheWords, splitAndAdd1, splitAndAdd1WithMap, capAllTheWordsWithMap } from "../src/SeqenceAbstractions";
 
 const chai = require("chai");
 const expect = chai.expect;
@@ -6,9 +6,9 @@ const expect = chai.expect;
 describe("Sequence abstraction Tests", () => {
 
   it("number less than 7", () => {
-    let input = [1,2,3,45,6,7];
-    let output = input.filter(x => x <7);
-    expect(output).to.deep.equal([1,2,3,6]);
+    let input = [1, 2, 3, 45, 6, 7];
+    let output = input.filter(x => x < 7);
+    expect(output).to.deep.equal([1, 2, 3, 6]);
   });
 
   it("return strings longer than 4", () => {
@@ -18,22 +18,22 @@ describe("Sequence abstraction Tests", () => {
   });
 
   it("reduceFilter can accept aribrary filter lambdas", () => {
-    let numberString = reduceFilter([1,2,3,4,5,6], (x)=>x%2===1)
-    expect(numberString).to.deep.equal([1,3,5]);
+    let numberString = reduceFilter([1, 2, 3, 4, 5, 6], (x) => x % 2 === 1)
+    expect(numberString).to.deep.equal([1, 3, 5]);
   });
 
   it("onlyEvens can filter only evens", () => {
-    let numberString = onlyEvens([1,2,3,4,5,6])
-    expect(numberString).to.deep.equal([2,4,6]);
+    let numberString = onlyEvens([1, 2, 3, 4, 5, 6])
+    expect(numberString).to.deep.equal([2, 4, 6]);
   });
-  
+
   it("can turn array into string", () => {
-    let numberString = sumUp([1,2,3,1,7])
+    let numberString = sumUp([1, 2, 3, 1, 7])
     expect(numberString).equals(14);
   });
 
   it("recreate map", () => {
-    let sizes = mapWithReduce([1, 2, 3], x => x+ 1)
+    let sizes = mapWithReduce([1, 2, 3], x => x + 1)
     expect(sizes).to.deep.equal([2, 3, 4]);
   });
 
@@ -44,17 +44,17 @@ describe("Sequence abstraction Tests", () => {
 
   it("count letters can correctly count each letter", () => {
     let sizes = countLetters("abcaaadf")
-    expect(sizes).to.deep.equal({"a": 4, "b": 1, "c": 1, "d": 1, "f": 1});
+    expect(sizes).to.deep.equal({ "a": 4, "b": 1, "c": 1, "d": 1, "f": 1 });
   });
 
   it("concatX X's the size of the arrray", () => {
-    let sizes = concatX([1,2,3], 3)
-    expect(sizes).to.deep.equal([1,1,1,2,2,2,3,3,3]);
+    let sizes = concatX([1, 2, 3], 3)
+    expect(sizes).to.deep.equal([1, 1, 1, 2, 2, 2, 3, 3, 3]);
   });
 
   it("concat double doubles the size of the arrray", () => {
-    let sizes = concatDouble([1,2,3])
-    expect(sizes).to.deep.equal([1,1,2,2,3,3]);
+    let sizes = concatDouble([1, 2, 3])
+    expect(sizes).to.deep.equal([1, 1, 2, 2, 3, 3]);
   });
 
   it("display histogram of letters", () => {
@@ -62,11 +62,11 @@ describe("Sequence abstraction Tests", () => {
     expect(sizes).equals("a: ****\nb: *\nc: ******\nd: *****");
   });
 
-    // ****
-    // ***
-    // ****
-    // ***
-    // ******
+  // ****
+  // ***
+  // ****
+  // ***
+  // ******
   it("can count word sizes visually", () => {
     let sizes = countWordSizesVisually("steve was here and there")
     expect(sizes).equals("*****\n***\n****\n***\n*****");
@@ -107,4 +107,5 @@ describe("Sequence abstraction Tests", () => {
     let allWordsCapped = capAllTheWordsWithMap("steve was here")
     expect(allWordsCapped).equals("Steve Was Here");
   });
+
 });
