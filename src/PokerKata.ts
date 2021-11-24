@@ -56,18 +56,45 @@ export function parseHand(handString: string): Card[] {
     return hand;
 }
 
-export function isPair(hand: Card[]): boolean {
-    let numbers = hand.map((card: Card) => card.value);
-    let numberCounts = numbers.reduce((acc: any, next) => {
-        if (acc[next]) {
-            acc[next] += 1
-        } else {
-            acc[next] = 1
-        }
-        return acc;
-    }, {});
-    let allPairs = Object.values(numberCounts).filter(x => x === 2);
-    let isPair = allPairs.length === 1;
-    return isPair;
+function countNumbers(hand: Card[]) {
+    let numberCounts =
+        hand.map((card: Card) => card.value)
+            .reduce((acc: any, next) => {
+                if (acc[next]) {
+                    acc[next] += 1
+                } else {
+                    acc[next] = 1
+                }
+                return acc;
+            }, {});
+    return numberCounts;
 }
 
+function countPairs(hand: Card[], pairSize: number): number {
+
+    let numberOfPairs = Object.values(countNumbers(hand)).filter(x => x === pairSize).length;
+    return numberOfPairs;
+}
+
+export function isPair(hand: Card[]): boolean {
+    return countPairs(hand, 2) === 1;
+}
+
+export function isTwoPair(hand: Card[]): boolean {
+    return countPairs(hand, 2) === 2;
+}
+
+export function isThreeOfAKind(hand: Card[]): boolean {
+    return countPairs(hand, 3) === 1;
+}
+
+export function isStraight(hand: Card[]): boolean {
+    let numberCounts = countNumbers(hand);
+
+    let cardFaces = Object.keys(numberCounts).map(x => parseInt(x));
+    let minAndMaxCardAre4Apart = Math.max(...cardFaces) - Math.min(...cardFaces) === 4
+
+    let all5CardsHaveAUnqiueValue = Object.values(numberCounts).filter(x => x === 1).length === 5
+
+    return minAndMaxCardAre4Apart && all5CardsHaveAUnqiueValue
+}
