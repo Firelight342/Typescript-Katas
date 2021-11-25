@@ -1,4 +1,4 @@
-import { isThreeOfAKind, Card, isPair, Suit, parseCard, parseHand, isTwoPair, isStraight } from "../src/PokerKata";
+import { isThreeOfAKind, Card, isPair, Suit, parseCard, parseHand, isTwoPair, isStraight, isFourOfAKind } from "../src/PokerKata";
 
 const chai = require("chai");
 const expect = chai.expect;
@@ -102,6 +102,30 @@ describe("PokerKata Tests", () => {
     let actual = isThreeOfAKind(hand);
 
     expect(actual).equals(true);
+  });
+
+  it("can detect four of a kind", () => {
+    let hand: Card[] = [
+      { suit: Suit.Clubs, value: 2 },
+      { suit: Suit.Clubs, value: 2 },
+      { suit: Suit.Clubs, value: 2 },
+      { suit: Suit.Clubs, value: 2 },
+      { suit: Suit.Clubs, value: 4 }
+    ]
+    let actual = isFourOfAKind(hand);
+    expect(actual).equals(true);
+  });
+
+  it("can detect four of a kind", () => {
+    let hand: Card[] = [
+      { suit: Suit.Clubs, value: 2 },
+      { suit: Suit.Clubs, value: 2 },
+      { suit: Suit.Clubs, value: 6 },
+      { suit: Suit.Clubs, value: 2 },
+      { suit: Suit.Clubs, value: 4 }
+    ]
+    let actual = isFourOfAKind(hand);
+    expect(actual).equals(false);
   });
 
   it("can detect a straight", () => {

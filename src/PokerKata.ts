@@ -88,6 +88,10 @@ export function isThreeOfAKind(hand: Card[]): boolean {
     return countPairs(hand, 3) === 1;
 }
 
+export function isFourOfAKind(hand: Card[]): boolean {
+    return countPairs(hand, 4) === 1;
+}
+
 export function isStraight(hand: Card[]): boolean {
     let numberCounts = countNumbers(hand);
 
