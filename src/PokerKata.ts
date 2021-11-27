@@ -102,3 +102,4 @@ export function isStraight(hand: Card[]): boolean {
 
     return minAndMaxCardAre4Apart && all5CardsHaveAUnqiueValue
 }
+

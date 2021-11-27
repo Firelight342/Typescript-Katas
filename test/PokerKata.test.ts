@@ -57,7 +57,6 @@ describe("PokerKata Tests", () => {
     ]
 
     let isAPair = isPair(hand);
-
     expect(isAPair).equals(true);
   });
 
@@ -71,7 +70,6 @@ describe("PokerKata Tests", () => {
     ]
 
     let isAPair = isPair(hand);
-
     expect(isAPair).equals(false);
   });
 
@@ -86,7 +84,6 @@ describe("PokerKata Tests", () => {
     ]
 
     let isATwoPair = isTwoPair(hand);
-
     expect(isATwoPair).equals(true);
   });
 
@@ -100,7 +97,6 @@ describe("PokerKata Tests", () => {
     ]
 
     let actual = isThreeOfAKind(hand);
-
     expect(actual).equals(true);
   });
 
@@ -151,4 +147,6 @@ describe("PokerKata Tests", () => {
     ]
     expect(isStraight(hand)).equals(false);
   });
+
+
 });

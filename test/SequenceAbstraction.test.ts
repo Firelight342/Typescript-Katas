@@ -5,6 +5,12 @@ const expect = chai.expect;
 
 describe("Sequence abstraction Tests", () => {
 
+  it("words that start with r", () => {
+    let input = ["random", "words", "require", "practice"];
+    let output = input.filter(x => x.charAt(0) != "r");
+    expect(output).to.deep.equal(["words", "practice"]);
+  });
+
   it("number less than 7", () => {
     let input = [1, 2, 3, 45, 6, 7];
     let output = input.filter(x => x < 7);
