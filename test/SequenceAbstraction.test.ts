@@ -1,9 +1,16 @@
-import { onlyEvens, reduceFilter, sumUp, mapWithReduce, homemadeJoin, countLetters, concatX, concatDouble, histogramLetters, add5, countWordSizesVisually, countWordSizes, capAllTheWords, splitAndAdd1, splitAndAdd1WithMap, capAllTheWordsWithMap } from "../src/SeqenceAbstractions";
+import { onlyEvens, reduceFilter, sumUp, mapWithReduce, homemadeJoin, countLetters, concatX, concatDouble, histogramLetters, add5, countWordSizesVisually, countWordSizes, capAllTheWords, splitAndAdd1, splitAndAdd1WithMap, capAllTheWordsWithMap, rNorR } from "../src/SeqenceAbstractions";
 
 const chai = require("chai");
 const expect = chai.expect;
 
 describe("Sequence abstraction Tests", () => {
+
+  it("words that start with r regardless of upper or lower case", () => {
+    let input = ["random", "words", "Require", "practice"];
+    let output = rNorR(input);
+    expect(output).to.deep.equal(["words", "practice"]);
+
+  });
 
   it("words that start with r", () => {
     let input = ["random", "words", "require", "practice"];

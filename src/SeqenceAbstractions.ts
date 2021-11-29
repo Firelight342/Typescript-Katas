@@ -188,3 +188,15 @@ export function capAllTheWordsWithMap(input: string): string {
     let letters = words.map(letter => letter.charAt(0).toUpperCase() + letter.slice(1));
     return letters.join(" ");
 }
+
+export function rNorR(input: string[]): string[] {
+    let changedWords = input.filter(function (x) {
+        if (x.charAt(0) != "r" && x.charAt(0) != "R") {
+            //console.log(x.charAt(0))
+            return true;
+        }
+    });
+    //console.log(changedWords)
+    return changedWords;
+}
+
