@@ -103,3 +103,22 @@ export function isStraight(hand: Card[]): boolean {
     return minAndMaxCardAre4Apart && all5CardsHaveAUnqiueValue
 }
 
+
+export function isFlush(hand: Card[]): boolean {
+    let suitCounts: number[] =
+        hand.map((card: Card) => card.suit)
+            .reduce((acc: any, next) => {
+                if (acc[next]) {
+                    acc[next] += 1
+                } else {
+                    acc[next] = 1
+                }
+                return acc;
+            }, {});
+    return (Object.keys(suitCounts).length === 1);
+}
+
+export function isStraightFlush(hand: Card[]): boolean {
+    return isFlush(hand) === isStraight(hand);
+}
+

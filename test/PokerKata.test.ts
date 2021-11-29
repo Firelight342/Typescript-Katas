@@ -1,4 +1,4 @@
-import { isThreeOfAKind, Card, isPair, Suit, parseCard, parseHand, isTwoPair, isStraight, isFourOfAKind } from "../src/PokerKata";
+import { isThreeOfAKind, Card, isPair, Suit, parseCard, parseHand, isTwoPair, isStraight, isFourOfAKind, isFlush, isStraightFlush } from "../src/PokerKata";
 
 const chai = require("chai");
 const expect = chai.expect;
@@ -137,7 +137,7 @@ describe("PokerKata Tests", () => {
     expect(actual).equals(true);
   });
 
-  it("can detect when its not a straight becaues they are not next to each other", () => {
+  it("can detect when it's not a straight becaues they are not next to each other", () => {
     let hand: Card[] = [
       { suit: Suit.Clubs, value: 2 },
       { suit: Suit.Clubs, value: 4 },
@@ -148,5 +148,26 @@ describe("PokerKata Tests", () => {
     expect(isStraight(hand)).equals(false);
   });
 
+  it("can detect when it's a flush (same suit for all cards)", () => {
+    let hand: Card[] = [
+      { suit: Suit.Clubs, value: 2 },
+      { suit: Suit.Clubs, value: 4 },
+      { suit: Suit.Clubs, value: 5 },
+      { suit: Suit.Clubs, value: 3 },
+      { suit: Suit.Clubs, value: 8 }
+    ]
+    expect(isFlush(hand)).equals(true);
+  });
+
+  it("can detect when it's a straight flush", () => {
+    let hand: Card[] = [
+      { suit: Suit.Clubs, value: 2 },
+      { suit: Suit.Clubs, value: 3 },
+      { suit: Suit.Clubs, value: 4 },
+      { suit: Suit.Clubs, value: 5 },
+      { suit: Suit.Clubs, value: 6 }
+    ]
+    expect(isStraightFlush(hand)).equals(true);
+  });
 
 });
