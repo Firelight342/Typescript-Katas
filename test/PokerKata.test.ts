@@ -1,4 +1,10 @@
-import { isThreeOfAKind, Card, isPair, Suit, parseCard, parseHand, isTwoPair, isStraight, isFourOfAKind, isFlush, isStraightFlush } from "../src/PokerKata";
+import {
+  determineWinner, detectHand, HandRank, isFullHouse, isThreeOfAKind,
+  Card, isPair, Suit, parseCard, parseHand, isTwoPair, isStraight, isFourOfAKind,
+  isFlush, isStraightFlush, Winner
+} from "../src/PokerKata";
+
+
 
 const chai = require("chai");
 const expect = chai.expect;
@@ -49,7 +55,7 @@ describe("PokerKata Tests", () => {
 
   it("can detect a pair", () => {
     let hand: Card[] = [
-      { suit: Suit.Clubs, value: 2 },
+      { suit: Suit.Clubs, value: 4 },
       { suit: Suit.Clubs, value: 2 },
       { suit: Suit.Clubs, value: 3 },
       { suit: Suit.Clubs, value: 4 },
@@ -169,5 +175,52 @@ describe("PokerKata Tests", () => {
     ]
     expect(isStraightFlush(hand)).equals(true);
   });
+
+  it("can detect when it's a not a straight flush", () => {
+    let hand: Card[] = [
+      { suit: Suit.Clubs, value: 2 },
+      { suit: Suit.Clubs, value: 3 },
+      { suit: Suit.Spades, value: 9 },
+      { suit: Suit.Clubs, value: 5 },
+      { suit: Suit.Clubs, value: 6 }
+    ]
+    expect(isStraightFlush(hand)).equals(false);
+  });
+
+  it("can detect a full house", () => {
+    let hand: Card[] = [
+      { suit: Suit.Clubs, value: 2 },
+      { suit: Suit.Clubs, value: 2 },
+      { suit: Suit.Spades, value: 9 },
+      { suit: Suit.Clubs, value: 9 },
+      { suit: Suit.Clubs, value: 9 }
+    ]
+    expect(isFullHouse(hand)).equals(true);
+  });
+
+
+  const highCardEights = "8H 3D 4H 5H 6H";
+  const pairOfTwos = "2H 2S 3D 4D 7D";
+  const pairOfFours = "4H 2S 3D 4D 7D";
+
+  it("fully detect pair", () => {
+    expect(detectHand(highCardEights)).equals(HandRank.HighCard);
+    expect(detectHand(pairOfTwos)).equals(HandRank.Pair);
+    expect(detectHand("2H 2H 4D 4H 7H")).equals(HandRank.TwoPairs);
+    expect(detectHand("2H 2H 2D 4H 7H")).equals(HandRank.ThreeOfAKind);
+    expect(detectHand("2H 3H 4D 5H 6H")).equals(HandRank.Straight);
+    expect(detectHand("2H 2H 3H 4H 7H")).equals(HandRank.Flush);
+    expect(detectHand("2H 2H 3H 3H 3D")).equals(HandRank.FullHouse);
+    expect(detectHand("2H 2H 2H 2H 7D")).equals(HandRank.FourOfAKind);
+    expect(detectHand("2H 3H 4H 5H 6H")).equals(HandRank.StraightFlush);
+  });
+
+
+  it("determine winner", () => {
+    expect(determineWinner(highCardEights, pairOfTwos)).equals(Winner.PlayerTwo);
+    expect(determineWinner(pairOfTwos, highCardEights)).equals(Winner.PlayerOne);
+    expect(determineWinner(pairOfTwos, pairOfFours)).equals(Winner.PlayerTwo);
+  });
+
 
 });

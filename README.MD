@@ -17,7 +17,17 @@ console.log()
 
 
 
+// && (and)   
+// true && true === true
+// true && false === false
+// false && true === false
+// false && false === false
 
+// || (or)   
+// true || true === true
+// true || false === true
+// false || true === true
+// false || false === false
 
 
 export function parseHandMap (handString :string) :Card[] {
