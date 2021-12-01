@@ -11,7 +11,7 @@ const expect = chai.expect;
 
 describe("PokerKata Tests", () => {
 
-  it("can correctly parse a cards value", () => {
+  test("can correctly parse a cards value", () => {
     let card = parseCard("2H")
     expect(card.value).equal(2);
 
@@ -32,7 +32,7 @@ describe("PokerKata Tests", () => {
 
   });
 
-  it("can correctly parse a cards suit", () => {
+  test("can correctly parse a cards suit", () => {
     let card = parseCard("2H")
     expect(card.suit).equal(Suit.Hearts);
 
@@ -46,14 +46,14 @@ describe("PokerKata Tests", () => {
     expect(card4.suit).equal(Suit.Spades);
   });
 
-  it("can parse cards in a hand", () => {
+  test("can parse cards in a hand", () => {
     let hand = parseHand("2H 3D 5S 9C KD")
     expect(hand[0].suit).equals(Suit.Hearts);
     expect(hand[2].suit).equals(Suit.Spades);
     expect(hand[4].value).equals(13);
   });
 
-  it("can detect a pair", () => {
+  test("can detect a pair", () => {
     let hand: Card[] = [
       { suit: Suit.Clubs, value: 4 },
       { suit: Suit.Clubs, value: 2 },
@@ -63,10 +63,23 @@ describe("PokerKata Tests", () => {
     ]
 
     let isAPair = isPair(hand);
-    expect(isAPair).equals(true);
+    expect(isAPair).to.deep.equal({ isMatch: true, value: 4 })
   });
 
-  it("can detect not a pair", () => {
+  test("can detect a pair of 3's", () => {
+    let hand: Card[] = [
+      { suit: Suit.Clubs, value: 4 },
+      { suit: Suit.Clubs, value: 2 },
+      { suit: Suit.Clubs, value: 3 },
+      { suit: Suit.Clubs, value: 3 },
+      { suit: Suit.Clubs, value: 5 }
+    ]
+
+    let isAPair = isPair(hand);
+    expect(isAPair).to.deep.equal({ isMatch: true, value: 3 })
+  });
+
+  test("can detect not a pair", () => {
     let hand: Card[] = [
       { suit: Suit.Clubs, value: 1 },
       { suit: Suit.Clubs, value: 2 },
@@ -76,11 +89,11 @@ describe("PokerKata Tests", () => {
     ]
 
     let isAPair = isPair(hand);
-    expect(isAPair).equals(false);
+    expect(isAPair).to.deep.equal({ isMatch: false });
   });
 
 
-  it("can detect a two pair", () => {
+  test("can detect a two pair", () => {
     let hand: Card[] = [
       { suit: Suit.Clubs, value: 2 },
       { suit: Suit.Clubs, value: 2 },
@@ -93,7 +106,7 @@ describe("PokerKata Tests", () => {
     expect(isATwoPair).equals(true);
   });
 
-  it("can detect three of a kind", () => {
+  test("can detect three of a kind", () => {
     let hand: Card[] = [
       { suit: Suit.Clubs, value: 2 },
       { suit: Suit.Clubs, value: 2 },
@@ -106,7 +119,7 @@ describe("PokerKata Tests", () => {
     expect(actual).equals(true);
   });
 
-  it("can detect four of a kind", () => {
+  test("can detect four of a kind", () => {
     let hand: Card[] = [
       { suit: Suit.Clubs, value: 2 },
       { suit: Suit.Clubs, value: 2 },
@@ -118,7 +131,7 @@ describe("PokerKata Tests", () => {
     expect(actual).equals(true);
   });
 
-  it("can detect four of a kind", () => {
+  test("can detect four of a kind", () => {
     let hand: Card[] = [
       { suit: Suit.Clubs, value: 2 },
       { suit: Suit.Clubs, value: 2 },
@@ -130,7 +143,7 @@ describe("PokerKata Tests", () => {
     expect(actual).equals(false);
   });
 
-  it("can detect a straight", () => {
+  test("can detect a straight", () => {
     let hand: Card[] = [
       { suit: Suit.Clubs, value: 2 },
       { suit: Suit.Clubs, value: 4 },
@@ -143,7 +156,7 @@ describe("PokerKata Tests", () => {
     expect(actual).equals(true);
   });
 
-  it("can detect when it's not a straight becaues they are not next to each other", () => {
+  test("can detect when it's not a straight becaues they are not next to each other", () => {
     let hand: Card[] = [
       { suit: Suit.Clubs, value: 2 },
       { suit: Suit.Clubs, value: 4 },
@@ -154,7 +167,7 @@ describe("PokerKata Tests", () => {
     expect(isStraight(hand)).equals(false);
   });
 
-  it("can detect when it's a flush (same suit for all cards)", () => {
+  test("can detect when it's a flush (same suit for all cards)", () => {
     let hand: Card[] = [
       { suit: Suit.Clubs, value: 2 },
       { suit: Suit.Clubs, value: 4 },
@@ -165,7 +178,7 @@ describe("PokerKata Tests", () => {
     expect(isFlush(hand)).equals(true);
   });
 
-  it("can detect when it's a straight flush", () => {
+  test("can detect when it's a straight flush", () => {
     let hand: Card[] = [
       { suit: Suit.Clubs, value: 2 },
       { suit: Suit.Clubs, value: 3 },
@@ -176,7 +189,7 @@ describe("PokerKata Tests", () => {
     expect(isStraightFlush(hand)).equals(true);
   });
 
-  it("can detect when it's a not a straight flush", () => {
+  test("can detect when it's a not a straight flush", () => {
     let hand: Card[] = [
       { suit: Suit.Clubs, value: 2 },
       { suit: Suit.Clubs, value: 3 },
@@ -187,7 +200,7 @@ describe("PokerKata Tests", () => {
     expect(isStraightFlush(hand)).equals(false);
   });
 
-  it("can detect a full house", () => {
+  test("can detect a full house", () => {
     let hand: Card[] = [
       { suit: Suit.Clubs, value: 2 },
       { suit: Suit.Clubs, value: 2 },
@@ -203,20 +216,22 @@ describe("PokerKata Tests", () => {
   const pairOfTwos = "2H 2S 3D 4D 7D";
   const pairOfFours = "4H 2S 3D 4D 7D";
 
-  it("fully detect pair", () => {
-    expect(detectHand(highCardEights)).equals(HandRank.HighCard);
-    expect(detectHand(pairOfTwos)).equals(HandRank.Pair);
-    expect(detectHand("2H 2H 4D 4H 7H")).equals(HandRank.TwoPairs);
-    expect(detectHand("2H 2H 2D 4H 7H")).equals(HandRank.ThreeOfAKind);
-    expect(detectHand("2H 3H 4D 5H 6H")).equals(HandRank.Straight);
-    expect(detectHand("2H 2H 3H 4H 7H")).equals(HandRank.Flush);
-    expect(detectHand("2H 2H 3H 3H 3D")).equals(HandRank.FullHouse);
-    expect(detectHand("2H 2H 2H 2H 7D")).equals(HandRank.FourOfAKind);
-    expect(detectHand("2H 3H 4H 5H 6H")).equals(HandRank.StraightFlush);
+  test("fully detect pair", () => {
+    expect(detectHand(highCardEights).handRank).equals(HandRank.HighCard);
+    expect(detectHand(pairOfTwos).handRank).equals(HandRank.Pair);
+    expect(detectHand(pairOfTwos).tiebreaker).equals(2);
+    expect(detectHand("2H 2H 4D 4H 7H").handRank).equals(HandRank.TwoPairs);
+    expect(detectHand("2H 2H 2D 4H 7H").handRank).equals(HandRank.ThreeOfAKind);
+    expect(detectHand("2H 3H 4D 5H 6H").handRank).equals(HandRank.Straight);
+    expect(detectHand("2H 2H 3H 4H 7H").handRank).equals(HandRank.Flush);
+    expect(detectHand("2H 2H 3H 3H 3D").handRank).equals(HandRank.FullHouse);
+    expect(detectHand("2H 2H 2H 2H 7D").handRank).equals(HandRank.FourOfAKind);
+    expect(detectHand("2H 3H 4H 5H 6H").handRank).equals(HandRank.StraightFlush);
   });
 
 
-  it("determine winner", () => {
+
+  test("determine winner", () => {
     expect(determineWinner(highCardEights, pairOfTwos)).equals(Winner.PlayerTwo);
     expect(determineWinner(pairOfTwos, highCardEights)).equals(Winner.PlayerOne);
     expect(determineWinner(pairOfTwos, pairOfFours)).equals(Winner.PlayerTwo);
@@ -224,3 +239,7 @@ describe("PokerKata Tests", () => {
 
 
 });
+function RankMatch(arg0: number) {
+  throw new Error("Function not implemented.");
+}
+

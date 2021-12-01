@@ -22,6 +22,11 @@ export interface Card {
     value: number
 }
 
+export interface RankMatch {
+    isMatch: boolean
+    value?: number
+}
+
 // pure, helper functions (leaf logic nodes)
 function parseSuit(suitString: string): Suit {
     var suit = Suit.Hearts;
@@ -81,9 +86,29 @@ function countPairs(hand: Card[], pairSize: number): number {
     return numberOfPairs;
 }
 
-export function isPair(hand: Card[]): boolean {
-    let isPair = countPairs(hand, 2) === 1;
-    return isPair
+export interface FaceValuesWithNumbers {
+    countOfPairs: number; // could just be pairValues.length?
+    pairValue: number; // probably needs to be a number[]  for TwoPair
+}
+
+function countPairsWithValues(hand: Card[], pairSize: number): FaceValuesWithNumbers {
+    let numberCounts = countNumbers(hand)
+
+    let faceValuesWithPairs = Object.keys(numberCounts).filter(faceValue => numberCounts[faceValue] === pairSize);
+    let numberOfPairs = faceValuesWithPairs.length;
+
+    return { countOfPairs: numberOfPairs, pairValue: parseInt(faceValuesWithPairs[0]) };
+}
+
+export function isPair(hand: Card[]): RankMatch {
+    let faceValuesWithNumbers = countPairsWithValues(hand, 2)
+    let isPair = faceValuesWithNumbers.countOfPairs === 1;
+
+    if (isPair) {
+        return { isMatch: isPair, value: faceValuesWithNumbers.pairValue }
+    } else {
+        return { isMatch: isPair }
+    }
 }
 
 export function isTwoPair(hand: Card[]): boolean {
@@ -133,37 +158,42 @@ export function isStraightFlush(hand: Card[]): boolean {
 }
 
 export function isFullHouse(hand: Card[]): boolean {
-    return isThreeOfAKind(hand) && isPair(hand);
+    return isThreeOfAKind(hand) && isPair(hand).isMatch;
 }
 
-export function detectHand(handString: string): HandRank {
+export interface RankedHand {
+    handRank: HandRank;
+    tiebreaker: number;
+}
+
+export function detectHand(handString: string): RankedHand {
     let hand = parseHand(handString)
 
     if (isStraightFlush(hand)) {
-        return HandRank.StraightFlush;
+        return { handRank: HandRank.StraightFlush, tiebreaker: 0 };
     }
     if (isFourOfAKind(hand)) {
-        return HandRank.FourOfAKind;
+        return { tiebreaker: 0, handRank: HandRank.FourOfAKind };
     }
     if (isFullHouse(hand)) {
-        return HandRank.FullHouse;
+        return { tiebreaker: 0, handRank: HandRank.FullHouse };
     }
     if (isFlush(hand)) {
-        return HandRank.Flush;
+        return { tiebreaker: 0, handRank: HandRank.Flush };
     }
     if (isStraight(hand)) {
-        return HandRank.Straight;
+        return { tiebreaker: 0, handRank: HandRank.Straight };
     }
     if (isThreeOfAKind(hand)) {
-        return HandRank.ThreeOfAKind;
+        return { tiebreaker: 0, handRank: HandRank.ThreeOfAKind };
     }
     if (isTwoPair(hand)) {
-        return HandRank.TwoPairs;
+        return { tiebreaker: 0, handRank: HandRank.TwoPairs };
     }
-    if (isPair(hand)) {
-        return HandRank.Pair;
+    if (isPair(hand).isMatch) {
+        return { tiebreaker: isPair(hand).value || 0, handRank: HandRank.Pair };
     }
-    return HandRank.HighCard;
+    return { tiebreaker: 0, handRank: HandRank.HighCard };
 }
 
 export enum Winner {
@@ -193,19 +223,20 @@ export function determineWinner(player1String: string, player2String: string): W
     let player1 = detectHand(player1String)
     let player2 = detectHand(player2String)
 
-    if (handRanks[player1] > handRanks[player2]) {
+    if (handRanks[player1.handRank] > handRanks[player2.handRank]) {
         return Winner.PlayerOne
     }
-    if (handRanks[player1] < handRanks[player2]) {
+    if (handRanks[player1.handRank] < handRanks[player2.handRank]) {
         return Winner.PlayerTwo
+    }
+    if (handRanks[player1.handRank] === handRanks[player2.handRank]) {
+        if (player1.tiebreaker > player2.tiebreaker) {
+            return Winner.PlayerOne;
+        }
+        return Winner.PlayerTwo;
     }
     return Winner.Tie;
 }
-
-
-
-
-
 
 
 
