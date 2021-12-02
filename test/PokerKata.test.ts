@@ -222,7 +222,7 @@ describe("PokerKata Tests", () => {
   test("fully detect pair", () => {
     expect(detectHand(highCardEights).handRank).equals(HandRank.HighCard);
     expect(detectHand(pairOfTwos).handRank).equals(HandRank.Pair);
-    expect(detectHand(pairOfTwos).tiebreaker).to.deep.equal([2]);
+    expect(detectHand(pairOfTwos).tiebreaker).to.deep.equal([2, 7, 4, 3]);
     expect(detectHand("2H 2H 4D 4H 7H").handRank).equals(HandRank.TwoPairs);
     expect(detectHand(twoPairWithHighOf7).handRank).equals(HandRank.TwoPairs);
     expect(detectHand(twoPairWithHighOf7).tiebreaker).to.deep.equal([7, 4, 2]);
@@ -243,10 +243,14 @@ describe("PokerKata Tests", () => {
   const twoPairWithHighOf4A = "2H 2S 4D 4D 7D";  // [4, 2, 7]
   const twoPairWithHighOf4B = "2H 2S 4D 4D 5D";  // [4, 2, 5]
 
+  const pairOfTwosA = "2H 2S 3D 5D 9D";
+  const pairOfTwosB = "2H 2S 4D 5D 9D";
+
   test("determine winner with same HandRank", () => {
     expect(determineWinner(pairOfTwos, pairOfFours)).equals(Winner.PlayerTwo);
     expect(determineWinner(twoPairWithHighOf4, twoPairWithHighOf7)).equals(Winner.PlayerTwo);
     expect(determineWinner(twoPairWithHighOf4A, twoPairWithHighOf4B)).equals(Winner.PlayerOne);
+    expect(determineWinner(pairOfTwosA, pairOfTwosB)).equals(Winner.PlayerTwo);
   });
 
 });

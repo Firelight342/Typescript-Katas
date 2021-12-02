@@ -190,15 +190,23 @@ export function detectHand(handString: string): RankedHand {
     }
     let twoPairData = isTwoPair(hand)
     if (twoPairData.isMatch) {
-        let remainedCards = hand.map(x => x.value).filter(x => !twoPairData.rankValues.includes(x));
-
-        return { tiebreaker: twoPairData.rankValues.concat(remainedCards), handRank: HandRank.TwoPairs };
+        let tieBreakers = appendTieBreakers(hand, twoPairData);
+        return { tiebreaker: tieBreakers, handRank: HandRank.TwoPairs };
     }
     let pairData = isPair(hand)
     if (pairData.isMatch) {
-        return { tiebreaker: pairData.rankValues || [], handRank: HandRank.Pair };
+        let tieBreakers = appendTieBreakers(hand, pairData);
+        return { tiebreaker: tieBreakers, handRank: HandRank.Pair };
     }
     return { tiebreaker: [], handRank: HandRank.HighCard };
+}
+
+function appendTieBreakers(hand: Card[], type: RankMatch) {
+    let remainedCards= hand
+        .map(x => x.value)
+        .filter(x => !type.rankValues.includes(x))
+        .reverse();
+    return type.rankValues.concat(remainedCards);
 }
 
 export enum Winner {
@@ -244,11 +252,11 @@ export function determineWinner(player1String: string, player2String: string): W
 
 
 
-//               determineWinner
-//                detectHand                  
-// isFullHouse            isStraightFlush       parseHand 
-// isFlush   isStraight  isPair isTwoPair   parseCard    parseSuit ...
-
+//                 determineWinner
+//                   detectHand                  
+//      isFullHouse            isStraightFlush             parseHand 
+//      isFlush   isStraight  isPair isTwoPair       parseCard    parseSuit ...
+//      countPairsWithValues
 
 
 //                                                 StringEntry.detectHand                      ...
