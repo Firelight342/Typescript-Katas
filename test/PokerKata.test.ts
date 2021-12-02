@@ -63,7 +63,7 @@ describe("PokerKata Tests", () => {
     ]
 
     let isAPair = isPair(hand);
-    expect(isAPair).to.deep.equal({ isMatch: true, value: 4 })
+    expect(isAPair).to.deep.equal({ isMatch: true, value: [4] })
   });
 
   test("can detect a pair of 3's", () => {
@@ -76,7 +76,7 @@ describe("PokerKata Tests", () => {
     ]
 
     let isAPair = isPair(hand);
-    expect(isAPair).to.deep.equal({ isMatch: true, value: 3 })
+    expect(isAPair).to.deep.equal({ isMatch: true, value: [3] })
   });
 
   test("can detect not a pair", () => {
@@ -89,7 +89,7 @@ describe("PokerKata Tests", () => {
     ]
 
     let isAPair = isPair(hand);
-    expect(isAPair).to.deep.equal({ isMatch: false });
+    expect(isAPair).to.deep.equal({ isMatch: false, value: [] });
   });
 
 
@@ -103,7 +103,7 @@ describe("PokerKata Tests", () => {
     ]
 
     let isATwoPair = isTwoPair(hand);
-    expect(isATwoPair).equals(true);
+    expect(isATwoPair).to.deep.equal({ isMatch: true, value: [4, 2] });
   });
 
   test("can detect three of a kind", () => {
@@ -215,12 +215,20 @@ describe("PokerKata Tests", () => {
   const highCardEights = "8H 3D 4H 5H 6H";
   const pairOfTwos = "2H 2S 3D 4D 7D";
   const pairOfFours = "4H 2S 3D 4D 7D";
+  const twoPairWithHighOf4 = "2H 2S 4D 4D 7D";
+  const twoPairWithHighOf7 = "7H 2S 4D 4D 7D";
+
+  //const twoPairWithHighOf4A =  "2H 2S 4D 4D 7D";  // [4, 2, 7]
+  //const twoPairWithHighOf4B = "2H 2S 4D 4D 5D";  // [4, 2, 5]
 
   test("fully detect pair", () => {
     expect(detectHand(highCardEights).handRank).equals(HandRank.HighCard);
     expect(detectHand(pairOfTwos).handRank).equals(HandRank.Pair);
-    expect(detectHand(pairOfTwos).tiebreaker).equals(2);
+    expect(detectHand(pairOfTwos).tiebreaker).to.deep.equal([2]);
     expect(detectHand("2H 2H 4D 4H 7H").handRank).equals(HandRank.TwoPairs);
+    expect(detectHand(twoPairWithHighOf7).handRank).equals(HandRank.TwoPairs);
+    expect(detectHand(twoPairWithHighOf7).tiebreaker).to.deep.equal([7, 4]);
+    expect(detectHand(twoPairWithHighOf4).handRank).equals(HandRank.TwoPairs);
     expect(detectHand("2H 2H 2D 4H 7H").handRank).equals(HandRank.ThreeOfAKind);
     expect(detectHand("2H 3H 4D 5H 6H").handRank).equals(HandRank.Straight);
     expect(detectHand("2H 2H 3H 4H 7H").handRank).equals(HandRank.Flush);
@@ -229,16 +237,20 @@ describe("PokerKata Tests", () => {
     expect(detectHand("2H 3H 4H 5H 6H").handRank).equals(HandRank.StraightFlush);
   });
 
-
-
-  test("determine winner", () => {
+  test("determine winner different HandRanks", () => {
     expect(determineWinner(highCardEights, pairOfTwos)).equals(Winner.PlayerTwo);
     expect(determineWinner(pairOfTwos, highCardEights)).equals(Winner.PlayerOne);
-    expect(determineWinner(pairOfTwos, pairOfFours)).equals(Winner.PlayerTwo);
   });
 
 
+  test("determine winner with same HandRank", () => {
+    expect(determineWinner(pairOfTwos, pairOfFours)).equals(Winner.PlayerTwo);
+    expect(determineWinner(twoPairWithHighOf4, twoPairWithHighOf7)).equals(Winner.PlayerTwo);
+    // both same high pair, different lower pairs
+  });
+
 });
+
 function RankMatch(arg0: number) {
   throw new Error("Function not implemented.");
 }

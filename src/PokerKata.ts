@@ -24,7 +24,7 @@ export interface Card {
 
 export interface RankMatch {
     isMatch: boolean
-    value?: number
+    value: number[]
 }
 
 // pure, helper functions (leaf logic nodes)
@@ -87,8 +87,8 @@ function countPairs(hand: Card[], pairSize: number): number {
 }
 
 export interface FaceValuesWithNumbers {
-    countOfPairs: number; // could just be pairValues.length?
-    pairValue: number; // probably needs to be a number[]  for TwoPair
+    countOfPairs: number;
+    pairValue: number[];
 }
 
 function countPairsWithValues(hand: Card[], pairSize: number): FaceValuesWithNumbers {
@@ -96,23 +96,21 @@ function countPairsWithValues(hand: Card[], pairSize: number): FaceValuesWithNum
 
     let faceValuesWithPairs = Object.keys(numberCounts).filter(faceValue => numberCounts[faceValue] === pairSize);
     let numberOfPairs = faceValuesWithPairs.length;
-
-    return { countOfPairs: numberOfPairs, pairValue: parseInt(faceValuesWithPairs[0]) };
+    return { countOfPairs: numberOfPairs, pairValue: (faceValuesWithPairs.map(x => parseInt(x)).sort().reverse()) };
 }
 
 export function isPair(hand: Card[]): RankMatch {
     let faceValuesWithNumbers = countPairsWithValues(hand, 2)
     let isPair = faceValuesWithNumbers.countOfPairs === 1;
-
-    if (isPair) {
-        return { isMatch: isPair, value: faceValuesWithNumbers.pairValue }
-    } else {
-        return { isMatch: isPair }
-    }
+    return { isMatch: isPair, value: faceValuesWithNumbers.pairValue }
+    
 }
 
-export function isTwoPair(hand: Card[]): boolean {
-    return countPairs(hand, 2) === 2;
+export function isTwoPair(hand: Card[]): RankMatch {
+    let faceValuesWithNumbers = countPairsWithValues(hand, 2)
+    let isTwoPair = faceValuesWithNumbers.countOfPairs === 2;
+    return { isMatch: isTwoPair, value: faceValuesWithNumbers.pairValue }
+    
 }
 
 export function isThreeOfAKind(hand: Card[]): boolean {
@@ -163,37 +161,39 @@ export function isFullHouse(hand: Card[]): boolean {
 
 export interface RankedHand {
     handRank: HandRank;
-    tiebreaker: number;
+    tiebreaker: number[];
 }
 
 export function detectHand(handString: string): RankedHand {
     let hand = parseHand(handString)
 
     if (isStraightFlush(hand)) {
-        return { handRank: HandRank.StraightFlush, tiebreaker: 0 };
+        return { handRank: HandRank.StraightFlush, tiebreaker: [] };
     }
     if (isFourOfAKind(hand)) {
-        return { tiebreaker: 0, handRank: HandRank.FourOfAKind };
+        return { tiebreaker: [], handRank: HandRank.FourOfAKind };
     }
     if (isFullHouse(hand)) {
-        return { tiebreaker: 0, handRank: HandRank.FullHouse };
+        return { tiebreaker: [], handRank: HandRank.FullHouse };
     }
     if (isFlush(hand)) {
-        return { tiebreaker: 0, handRank: HandRank.Flush };
+        return { tiebreaker: [], handRank: HandRank.Flush };
     }
     if (isStraight(hand)) {
-        return { tiebreaker: 0, handRank: HandRank.Straight };
+        return { tiebreaker: [], handRank: HandRank.Straight };
     }
     if (isThreeOfAKind(hand)) {
-        return { tiebreaker: 0, handRank: HandRank.ThreeOfAKind };
+        return { tiebreaker: [], handRank: HandRank.ThreeOfAKind };
     }
-    if (isTwoPair(hand)) {
-        return { tiebreaker: 0, handRank: HandRank.TwoPairs };
+    let twoPairData = isTwoPair(hand)
+    if (twoPairData.isMatch) {
+        return { tiebreaker: twoPairData.value || [], handRank: HandRank.TwoPairs };
     }
-    if (isPair(hand).isMatch) {
-        return { tiebreaker: isPair(hand).value || 0, handRank: HandRank.Pair };
+    let pairData = isPair(hand)
+    if (pairData.isMatch) {
+        return { tiebreaker: pairData.value || [], handRank: HandRank.Pair };
     }
-    return { tiebreaker: 0, handRank: HandRank.HighCard };
+    return { tiebreaker: [], handRank: HandRank.HighCard };
 }
 
 export enum Winner {
@@ -214,11 +214,6 @@ const handRanks = {
     [HandRank.StraightFlush]: 9,
 }
 
-export interface HandMatch {
-    isMatch: boolean;
-    tieBreaker?: number;
-}
-
 export function determineWinner(player1String: string, player2String: string): Winner {
     let player1 = detectHand(player1String)
     let player2 = detectHand(player2String)
@@ -233,7 +228,10 @@ export function determineWinner(player1String: string, player2String: string): W
         if (player1.tiebreaker > player2.tiebreaker) {
             return Winner.PlayerOne;
         }
-        return Winner.PlayerTwo;
+        if (player1.tiebreaker < player2.tiebreaker) {
+            return Winner.PlayerTwo;
+        }
+        return Winner.Tie;
     }
     return Winner.Tie;
 }
