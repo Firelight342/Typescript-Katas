@@ -24,7 +24,7 @@ export interface Card {
 
 export interface RankMatch {
     isMatch: boolean
-    value: number[]
+    rankValues: number[]
 }
 
 // pure, helper functions (leaf logic nodes)
@@ -88,29 +88,32 @@ function countPairs(hand: Card[], pairSize: number): number {
 
 export interface FaceValuesWithNumbers {
     countOfPairs: number;
-    pairValue: number[];
+    pairValues: number[];
 }
 
 function countPairsWithValues(hand: Card[], pairSize: number): FaceValuesWithNumbers {
     let numberCounts = countNumbers(hand)
 
-    let faceValuesWithPairs = Object.keys(numberCounts).filter(faceValue => numberCounts[faceValue] === pairSize);
+    let faceValuesWithPairs = Object.keys(numberCounts)
+        .filter(faceValue => numberCounts[faceValue] === pairSize);
     let numberOfPairs = faceValuesWithPairs.length;
-    return { countOfPairs: numberOfPairs, pairValue: (faceValuesWithPairs.map(x => parseInt(x)).sort().reverse()) };
+
+    return {
+        countOfPairs: numberOfPairs,
+        pairValues: (faceValuesWithPairs.map(x => parseInt(x)).sort().reverse())
+    };
 }
 
 export function isPair(hand: Card[]): RankMatch {
     let faceValuesWithNumbers = countPairsWithValues(hand, 2)
     let isPair = faceValuesWithNumbers.countOfPairs === 1;
-    return { isMatch: isPair, value: faceValuesWithNumbers.pairValue }
-    
+    return { isMatch: isPair, rankValues: faceValuesWithNumbers.pairValues }
 }
 
 export function isTwoPair(hand: Card[]): RankMatch {
     let faceValuesWithNumbers = countPairsWithValues(hand, 2)
     let isTwoPair = faceValuesWithNumbers.countOfPairs === 2;
-    return { isMatch: isTwoPair, value: faceValuesWithNumbers.pairValue }
-    
+    return { isMatch: isTwoPair, rankValues: faceValuesWithNumbers.pairValues }
 }
 
 export function isThreeOfAKind(hand: Card[]): boolean {
@@ -187,11 +190,13 @@ export function detectHand(handString: string): RankedHand {
     }
     let twoPairData = isTwoPair(hand)
     if (twoPairData.isMatch) {
-        return { tiebreaker: twoPairData.value || [], handRank: HandRank.TwoPairs };
+        let remainedCards = hand.map(x => x.value).filter(x => !twoPairData.rankValues.includes(x));
+
+        return { tiebreaker: twoPairData.rankValues.concat(remainedCards), handRank: HandRank.TwoPairs };
     }
     let pairData = isPair(hand)
     if (pairData.isMatch) {
-        return { tiebreaker: pairData.value || [], handRank: HandRank.Pair };
+        return { tiebreaker: pairData.rankValues || [], handRank: HandRank.Pair };
     }
     return { tiebreaker: [], handRank: HandRank.HighCard };
 }
