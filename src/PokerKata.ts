@@ -1,9 +1,5 @@
-export enum Suit {
-    Hearts,
-    Clubs,
-    Spades,
-    Diamonds,
-}
+import { Card, parseHand } from "./PokerParser";
+
 
 export enum HandRank {
     HighCard = "HighCard",
@@ -16,62 +12,11 @@ export enum HandRank {
     FourOfAKind = "FourOfAKind",
     StraightFlush = "StraightFlush",
 }
-
-export interface Card {
-    suit: Suit
-    value: number
-}
-
 export interface RankMatch {
     isMatch: boolean
     rankValues: number[]
 }
 
-// pure, helper functions (leaf logic nodes)
-function parseSuit(suitString: string): Suit {
-    var suit = Suit.Hearts;
-    if (suitString === 'D') {
-        suit = Suit.Diamonds
-    } else if (suitString === 'S') {
-        suit = Suit.Spades
-    } else if (suitString === 'C') {
-        suit = Suit.Clubs
-    }
-    return suit;
-}
-
-function parseValue(valueString: string): number {
-    var cardValue = parseInt(valueString);
-
-    if (valueString === "A") {
-        cardValue = 14
-    } else if (valueString === "K") {
-        cardValue = 13
-    } else if (valueString === "Q") {
-        cardValue = 12
-    } else if (valueString === "J") {
-        cardValue = 11
-    } else if (valueString === "T") {
-        cardValue = 10
-    }
-    return cardValue;
-}
-//           parseCard
-//     parseValue   parseSuit
-
-
-// orchestration function / layer / controller / manager
-export function parseCard(s: string): Card {
-    var suit = parseSuit(s[1]);
-    var cardValue = parseValue(s[0]);
-    return { suit: suit, value: cardValue };
-}
-
-export function parseHand(handString: string): Card[] {
-    let cards = handString.split(" ");
-    let hand = cards.map(card => parseCard(card));
-    return hand;
-}
 
 function countNumbers(hand: Card[]) {
     return countBy(hand, (card: Card) => card.value);
@@ -167,9 +112,7 @@ export interface RankedHand {
     tiebreaker: number[];
 }
 
-export function detectHand(handString: string): RankedHand {
-    let hand = parseHand(handString)
-
+export function detectHand(hand: Card[]): RankedHand {
     if (isStraightFlush(hand)) {
         return { handRank: HandRank.StraightFlush, tiebreaker: [] };
     }
@@ -202,7 +145,7 @@ export function detectHand(handString: string): RankedHand {
 }
 
 function appendTieBreakers(hand: Card[], type: RankMatch) {
-    let remainedCards= hand
+    let remainedCards = hand
         .map(x => x.value)
         .filter(x => !type.rankValues.includes(x))
         .reverse();
@@ -227,10 +170,8 @@ const handRanks = {
     [HandRank.StraightFlush]: 9,
 }
 
-export function determineWinner(player1String: string, player2String: string): Winner {
-    let player1 = detectHand(player1String)
-    let player2 = detectHand(player2String)
-
+// determine winner from two RankedHands
+export function determineWinner(player1: RankedHand, player2: RankedHand): Winner {
     if (handRanks[player1.handRank] > handRanks[player2.handRank]) {
         return Winner.PlayerOne
     }
@@ -246,21 +187,38 @@ export function determineWinner(player1String: string, player2String: string): W
         }
         return Winner.Tie;
     }
-    return Winner.Tie;
+    return Winner.Tie; // impossible, but needed for typesystem
 }
 
 
+// orchestration of all helpers     (parse, transform, calc.)
+export function playGame(player1String: string, player2String: string): Winner {
+    let player1 = detectHand(parseHand(player1String))
+    let player2 = detectHand(parseHand(player2String))
 
+    return determineWinner(player1, player2);
+}
 
-//                 determineWinner
-//                   detectHand                  
-//      isFullHouse            isStraightFlush             parseHand 
-//      isFlush   isStraight  isPair isTwoPair       parseCard    parseSuit ...
-//      countPairsWithValues
+// SOLID patterns / principals
+// S - (easy to test) Single responsibility principal
+// O -                  open closed principal 
+// L -                  liskov subsitition
+// I -                  interface separation
+// D - (fewer tests) dependency inversion principal
 
+//                fewest UI tests 
+//                fewer integration tests  (database, file system, accessing web sites)
+//              few orchestrator unit tests 
+//           fewer "bigger" unit tests that execise multiple helpers
+//    pure focused unit tests on leaf logic nodes
 
-//                                                 StringEntry.detectHand                      ...
-//                DomainLogic.detectHand                      StringParsers.parseHand           HtmlParsers.parseHand                                     
-// isFullHouse            isStraightFlush   
-// isFlush   isStraight  isPair isTwoPair                   parseCard    parseSuit ...             ...       ...
+// dependency inversion  ->  "flip" a function to the bottom of the stack, by passing in parameters it used to calculate
+// single responsibility principal -> a function should only have one reason to change
+
+//         FFF          playGame
+//         FFFFFF    detectHand                                      |                parseHand                 
+//      isFullHouse            isStraightFlush   appendTieBreakers   |             parseCard    parseSuit 
+//      isFlush   isStraight  isPair isTwoPair                       | 
+//      countPairsWithValues                                         |      
+//      countBy                            determineWinner           |   
 
