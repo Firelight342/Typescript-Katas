@@ -8,7 +8,6 @@ export interface Card {
     suit: Suit
     value: number
 }
-
 function parseSuit(suitString: string): Suit {
     var suit = Suit.Hearts;
     if (suitString === 'D') {

@@ -18,13 +18,26 @@ export interface RankMatch {
 }
 
 
+function countBy(hand: Card[], fn: (card: Card) => any): any {
+    let counts: number[] =
+        hand.map(fn)
+            .reduce((acc: any, next) => {
+                if (acc[next]) {
+                    acc[next] += 1
+                } else {
+                    acc[next] = 1
+                }
+                return acc;
+            }, {});
+    return counts;
+}
+
 function countNumbers(hand: Card[]) {
     return countBy(hand, (card: Card) => card.value);
 }
 
 function countPairs(hand: Card[], pairSize: number): number {
     let numberCounts = countNumbers(hand)
-    //console.log(numberCounts)
     let pairValues = Object.values(numberCounts).filter(x => x === pairSize);
     let numberOfPairs = pairValues.length;
 
@@ -61,15 +74,19 @@ export function isTwoPair(hand: Card[]): RankMatch {
     return { isMatch: isTwoPair, rankValues: faceValuesWithNumbers.pairValues }
 }
 
-export function isThreeOfAKind(hand: Card[]): boolean {
-    return countPairs(hand, 3) === 1;
+export function isThreeOfAKind(hand: Card[]): RankMatch {
+    let faceValuesWithNumbers = countPairsWithValues(hand, 3)
+    let isThreeOfAKind = faceValuesWithNumbers.countOfPairs === 1;
+    return { isMatch: isThreeOfAKind, rankValues: faceValuesWithNumbers.pairValues }
 }
 
-export function isFourOfAKind(hand: Card[]): boolean {
-    return countPairs(hand, 4) === 1;
+export function isFourOfAKind(hand: Card[]): RankMatch {
+    let faceValuesWithNumbers = countPairsWithValues(hand, 4)
+    let isFourOfAKind = faceValuesWithNumbers.countOfPairs === 1;
+    return { isMatch: isFourOfAKind, rankValues: faceValuesWithNumbers.pairValues }
 }
 
-export function isStraight(hand: Card[]): boolean {
+export function isStraight(hand: Card[]): RankMatch {
     let numberCounts = countNumbers(hand);
 
     let cardFaces = Object.keys(numberCounts).map(x => parseInt(x));
@@ -77,34 +94,24 @@ export function isStraight(hand: Card[]): boolean {
 
     let all5CardsHaveAUnqiueValue = Object.values(numberCounts).filter(x => x === 1).length === 5
 
-    return minAndMaxCardAre4Apart && all5CardsHaveAUnqiueValue
+    return { isMatch: minAndMaxCardAre4Apart && all5CardsHaveAUnqiueValue, rankValues: [] };
 }
 
-function countBy(hand: Card[], fn: (card: Card) => any): any {
-    let counts: number[] =
-        hand.map(fn)
-            .reduce((acc: any, next) => {
-                if (acc[next]) {
-                    acc[next] += 1
-                } else {
-                    acc[next] = 1
-                }
-                return acc;
-            }, {});
-    return counts;
-}
-
-export function isFlush(hand: Card[]): boolean {
+export function isFlush(hand: Card[]): RankMatch {
     let suitCounts: number[] = countBy(hand, (card: Card) => card.suit);
-    return (Object.keys(suitCounts).length === 1);
+    return { isMatch: (Object.keys(suitCounts).length === 1), rankValues: [] };
 }
 
-export function isStraightFlush(hand: Card[]): boolean {
-    return isFlush(hand) && isStraight(hand);
+export function isFullHouse(hand: Card[]): RankMatch {
+    let faceValuesWithNumbers = countPairsWithValues(hand, 3);
+    return {
+        isMatch: isThreeOfAKind(hand).isMatch && isPair(hand).isMatch,
+        rankValues: faceValuesWithNumbers.pairValues
+    };
 }
 
-export function isFullHouse(hand: Card[]): boolean {
-    return isThreeOfAKind(hand) && isPair(hand).isMatch;
+export function isStraightFlush(hand: Card[]): RankMatch {
+    return { isMatch: isFlush(hand).isMatch && isStraight(hand).isMatch, rankValues: [] };
 }
 
 export interface RankedHand {
@@ -113,23 +120,37 @@ export interface RankedHand {
 }
 
 export function detectHand(hand: Card[]): RankedHand {
-    if (isStraightFlush(hand)) {
-        return { handRank: HandRank.StraightFlush, tiebreaker: [] };
+
+    let straightFlushData = isStraightFlush(hand);
+    if (straightFlushData.isMatch) {
+        let tieBreakers = appendTieBreakers(hand, straightFlushData);
+        return { tiebreaker: tieBreakers, handRank: HandRank.StraightFlush };
     }
-    if (isFourOfAKind(hand)) {
-        return { tiebreaker: [], handRank: HandRank.FourOfAKind };
+    let fourOfAKindData = isFourOfAKind(hand)
+    if (fourOfAKindData.isMatch) {
+        let tieBreakers = appendTieBreakers(hand, fourOfAKindData);
+        return { tiebreaker: tieBreakers, handRank: HandRank.FourOfAKind };
     }
-    if (isFullHouse(hand)) {
-        return { tiebreaker: [], handRank: HandRank.FullHouse };
+    let fullHouseData = isFullHouse(hand)
+    if (fullHouseData.isMatch) {
+        //let tieBreakers = appendTieBreakers(hand, fullHouseData);
+        return { tiebreaker: fullHouseData.rankValues, handRank: HandRank.FullHouse };
     }
-    if (isFlush(hand)) {
-        return { tiebreaker: [], handRank: HandRank.Flush };
+
+    let flushData = isFlush(hand)
+    if (flushData.isMatch) {
+        let tieBreakers = appendTieBreakers(hand, flushData);
+        return { tiebreaker: tieBreakers, handRank: HandRank.Flush };
     }
-    if (isStraight(hand)) {
-        return { tiebreaker: [], handRank: HandRank.Straight };
+    let straightData = isStraight(hand)
+    if (straightData.isMatch) {
+        let tieBreakers = appendTieBreakers(hand, straightData);
+        return { tiebreaker: tieBreakers, handRank: HandRank.Straight };
     }
-    if (isThreeOfAKind(hand)) {
-        return { tiebreaker: [], handRank: HandRank.ThreeOfAKind };
+    let threeOfAKindData = isThreeOfAKind(hand)
+    if (threeOfAKindData.isMatch) {
+        let tieBreakers = appendTieBreakers(hand, threeOfAKindData);
+        return { tiebreaker: tieBreakers, handRank: HandRank.ThreeOfAKind };
     }
     let twoPairData = isTwoPair(hand)
     if (twoPairData.isMatch) {
@@ -141,13 +162,23 @@ export function detectHand(hand: Card[]): RankedHand {
         let tieBreakers = appendTieBreakers(hand, pairData);
         return { tiebreaker: tieBreakers, handRank: HandRank.Pair };
     }
-    return { tiebreaker: [], handRank: HandRank.HighCard };
+    let highCardData = isHighCard(hand)
+    let tieBreakers = appendTieBreakers(hand, highCardData);
+    return { tiebreaker: tieBreakers, handRank: HandRank.HighCard };
+}
+//Not sure if this step is needed
+export function isHighCard(hand: Card[]): RankMatch {
+    let faceValuesWithNumbers = countPairsWithValues(hand, 2)
+    let isHighCard = faceValuesWithNumbers.countOfPairs === 0;
+    return { isMatch: isHighCard, rankValues: [] }
 }
 
 function appendTieBreakers(hand: Card[], type: RankMatch) {
     let remainedCards = hand
         .map(x => x.value)
         .filter(x => !type.rankValues.includes(x))
+        //added sort
+        .sort()
         .reverse();
     return type.rankValues.concat(remainedCards);
 }
