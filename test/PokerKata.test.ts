@@ -195,7 +195,7 @@ describe("PokerKata Tests", () => {
     expect(detectHand(parseHand("2H 3H 4H 5H 6H")).handRank).equals(HandRank.StraightFlush);
   });
 
-  test.only("trying all tiebreakers", () => {
+  test("trying all tiebreakers", () => {
     //pair-twoPair-threeKind-fourKind-straight-flush-fullHouse-straightFlush-highCard
     expect(detectHand(parseHand(pairOfTwos)).tiebreaker).to.deep.equal([2, 7, 4, 3]);
     expect(detectHand(parseHand(twoPairWithHighOf7)).tiebreaker).to.deep.equal([7, 4, 2]);

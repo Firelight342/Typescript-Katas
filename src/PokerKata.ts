@@ -162,15 +162,13 @@ export function detectHand(hand: Card[]): RankedHand {
         let tieBreakers = appendTieBreakers(hand, pairData);
         return { tiebreaker: tieBreakers, handRank: HandRank.Pair };
     }
-    let highCardData = isHighCard(hand)
-    let tieBreakers = appendTieBreakers(hand, highCardData);
+    //let highCardData = isHighCard(hand)
+    let tieBreakers = appendTieBreakers(hand, isHighCard(hand));
     return { tiebreaker: tieBreakers, handRank: HandRank.HighCard };
 }
 //Not sure if this step is needed
 export function isHighCard(hand: Card[]): RankMatch {
-    let faceValuesWithNumbers = countPairsWithValues(hand, 2)
-    let isHighCard = faceValuesWithNumbers.countOfPairs === 0;
-    return { isMatch: isHighCard, rankValues: [] }
+    return { isMatch: true, rankValues: [] };
 }
 
 function appendTieBreakers(hand: Card[], type: RankMatch) {
