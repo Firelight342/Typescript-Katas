@@ -123,62 +123,54 @@ export function detectHand(hand: Card[]): RankedHand {
 
     let straightFlushData = isStraightFlush(hand);
     if (straightFlushData.isMatch) {
-        let tieBreakers = appendTieBreakers(hand, straightFlushData);
+        let tieBreakers = appendTieBreakers(hand, straightFlushData.rankValues);
         return { tiebreaker: tieBreakers, handRank: HandRank.StraightFlush };
     }
     let fourOfAKindData = isFourOfAKind(hand)
     if (fourOfAKindData.isMatch) {
-        let tieBreakers = appendTieBreakers(hand, fourOfAKindData);
+        let tieBreakers = appendTieBreakers(hand, fourOfAKindData.rankValues);
         return { tiebreaker: tieBreakers, handRank: HandRank.FourOfAKind };
     }
     let fullHouseData = isFullHouse(hand)
     if (fullHouseData.isMatch) {
-        //let tieBreakers = appendTieBreakers(hand, fullHouseData);
         return { tiebreaker: fullHouseData.rankValues, handRank: HandRank.FullHouse };
     }
-
     let flushData = isFlush(hand)
     if (flushData.isMatch) {
-        let tieBreakers = appendTieBreakers(hand, flushData);
+        let tieBreakers = appendTieBreakers(hand, flushData.rankValues);
         return { tiebreaker: tieBreakers, handRank: HandRank.Flush };
     }
     let straightData = isStraight(hand)
     if (straightData.isMatch) {
-        let tieBreakers = appendTieBreakers(hand, straightData);
+        let tieBreakers = appendTieBreakers(hand, straightData.rankValues);
         return { tiebreaker: tieBreakers, handRank: HandRank.Straight };
     }
     let threeOfAKindData = isThreeOfAKind(hand)
     if (threeOfAKindData.isMatch) {
-        let tieBreakers = appendTieBreakers(hand, threeOfAKindData);
+        let tieBreakers = appendTieBreakers(hand, threeOfAKindData.rankValues);
         return { tiebreaker: tieBreakers, handRank: HandRank.ThreeOfAKind };
     }
     let twoPairData = isTwoPair(hand)
     if (twoPairData.isMatch) {
-        let tieBreakers = appendTieBreakers(hand, twoPairData);
+        let tieBreakers = appendTieBreakers(hand, twoPairData.rankValues);
         return { tiebreaker: tieBreakers, handRank: HandRank.TwoPairs };
     }
     let pairData = isPair(hand)
     if (pairData.isMatch) {
-        let tieBreakers = appendTieBreakers(hand, pairData);
+        let tieBreakers = appendTieBreakers(hand, pairData.rankValues);
         return { tiebreaker: tieBreakers, handRank: HandRank.Pair };
     }
-    //let highCardData = isHighCard(hand)
-    let tieBreakers = appendTieBreakers(hand, isHighCard(hand));
+    let tieBreakers = appendTieBreakers(hand, [] );
     return { tiebreaker: tieBreakers, handRank: HandRank.HighCard };
 }
-//Not sure if this step is needed
-export function isHighCard(hand: Card[]): RankMatch {
-    return { isMatch: true, rankValues: [] };
-}
 
-function appendTieBreakers(hand: Card[], type: RankMatch) {
+function appendTieBreakers(hand: Card[], rankValues: number[]) {
     let remainedCards = hand
         .map(x => x.value)
-        .filter(x => !type.rankValues.includes(x))
-        //added sort
+        .filter(x => !rankValues.includes(x))
         .sort()
         .reverse();
-    return type.rankValues.concat(remainedCards);
+    return rankValues.concat(remainedCards);
 }
 
 export enum Winner {

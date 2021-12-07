@@ -203,9 +203,7 @@ describe("PokerKata Tests", () => {
     expect(detectHand(parseHand("4H 4H 4D 4H 6H")).tiebreaker).to.deep.equals([4, 6]);
     expect(detectHand(parseHand("2H 3H 4D 5H 6H")).tiebreaker).to.deep.equals([6, 5, 4, 3, 2]);
     expect(detectHand(parseHand("2H 3H 7H 5H 6H")).tiebreaker).to.deep.equals([7, 6, 5, 3, 2]);
-    //?
     expect(detectHand(parseHand("2H 2H 3H 3H 3D")).tiebreaker).to.deep.equals([3]);
-
     expect(detectHand(parseHand("2H 3H 4H 5H 6H")).tiebreaker).to.deep.equals([6, 5, 4, 3, 2]);
     expect(detectHand(parseHand("8H 3D 4H 5S 6H")).tiebreaker).to.deep.equals([8, 6, 5, 4, 3]);
 
