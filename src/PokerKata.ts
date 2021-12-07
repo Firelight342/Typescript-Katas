@@ -118,49 +118,26 @@ export interface RankedHand {
     handRank: HandRank;
     tiebreaker: number[];
 }
-
+type HandRankDetector = (hand: Card[]) => RankMatch
 export function detectHand(hand: Card[]): RankedHand {
+    let pairings: [HandRankDetector, HandRank][] = [
+        [isStraightFlush, HandRank.StraightFlush],
+        [isFourOfAKind, HandRank.FourOfAKind],
+        [isFullHouse, HandRank.FullHouse],
+        [isFlush, HandRank.Flush],
+        [isStraight, HandRank.Straight],
+        [isThreeOfAKind, HandRank.ThreeOfAKind],
+        [isTwoPair, HandRank.TwoPairs],
+        [isPair, HandRank.Pair],]
 
-    let straightFlushData = isStraightFlush(hand);
-    if (straightFlushData.isMatch) {
-        let tieBreakers = appendTieBreakers(hand, straightFlushData.rankValues);
-        return { tiebreaker: tieBreakers, handRank: HandRank.StraightFlush };
+    for (let [handRankDetector, handRank] of pairings) {
+        let handhData = handRankDetector(hand);
+        if (handhData.isMatch) {
+            let tieBreakers = appendTieBreakers(hand, handhData.rankValues);
+            return { tiebreaker: tieBreakers, handRank: handRank };
+        }
     }
-    let fourOfAKindData = isFourOfAKind(hand)
-    if (fourOfAKindData.isMatch) {
-        let tieBreakers = appendTieBreakers(hand, fourOfAKindData.rankValues);
-        return { tiebreaker: tieBreakers, handRank: HandRank.FourOfAKind };
-    }
-    let fullHouseData = isFullHouse(hand)
-    if (fullHouseData.isMatch) {
-        return { tiebreaker: fullHouseData.rankValues, handRank: HandRank.FullHouse };
-    }
-    let flushData = isFlush(hand)
-    if (flushData.isMatch) {
-        let tieBreakers = appendTieBreakers(hand, flushData.rankValues);
-        return { tiebreaker: tieBreakers, handRank: HandRank.Flush };
-    }
-    let straightData = isStraight(hand)
-    if (straightData.isMatch) {
-        let tieBreakers = appendTieBreakers(hand, straightData.rankValues);
-        return { tiebreaker: tieBreakers, handRank: HandRank.Straight };
-    }
-    let threeOfAKindData = isThreeOfAKind(hand)
-    if (threeOfAKindData.isMatch) {
-        let tieBreakers = appendTieBreakers(hand, threeOfAKindData.rankValues);
-        return { tiebreaker: tieBreakers, handRank: HandRank.ThreeOfAKind };
-    }
-    let twoPairData = isTwoPair(hand)
-    if (twoPairData.isMatch) {
-        let tieBreakers = appendTieBreakers(hand, twoPairData.rankValues);
-        return { tiebreaker: tieBreakers, handRank: HandRank.TwoPairs };
-    }
-    let pairData = isPair(hand)
-    if (pairData.isMatch) {
-        let tieBreakers = appendTieBreakers(hand, pairData.rankValues);
-        return { tiebreaker: tieBreakers, handRank: HandRank.Pair };
-    }
-    let tieBreakers = appendTieBreakers(hand, [] );
+    let tieBreakers = appendTieBreakers(hand, []);
     return { tiebreaker: tieBreakers, handRank: HandRank.HighCard };
 }
 
