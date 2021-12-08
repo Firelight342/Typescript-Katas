@@ -1,7 +1,7 @@
 import {
   determineWinner, detectHand, HandRank, isFullHouse, isThreeOfAKind,
   isTwoPair, isStraight, isFourOfAKind,
-  isFlush, isStraightFlush, Winner, playGame, isPair
+  isFlush, isStraightFlush, Winner, playGame, isPair, splitHands, printWinner
 } from "../src/PokerKata";
 import { Card, parseHand, Suit } from "../src/PokerParser";
 
@@ -214,31 +214,31 @@ describe("PokerKata Tests", () => {
     let w1 = determineWinner(
       { handRank: HandRank.Pair, tiebreaker: [2, 7, 5, 4] },
       { handRank: HandRank.Pair, tiebreaker: [4, 7, 5, 2] })
-    expect(w1).equals(Winner.PlayerTwo);
+    expect(w1).to.deep.equal({ winner: Winner.PlayerTwo, tiebreaker: [4, 7, 5, 2], handRank: HandRank.Pair });
 
     // p1 handrank higher
     let w2 = determineWinner(
       { handRank: HandRank.TwoPairs, tiebreaker: [2, 7, 5, 4] },
       { handRank: HandRank.Pair, tiebreaker: [4, 7, 5, 2] })
-    expect(w2).equals(Winner.PlayerOne);
+    expect(w2).to.deep.equal({ winner: Winner.PlayerOne, tiebreaker: [2, 7, 5, 4], handRank: HandRank.TwoPairs });
 
     // p2 handrank higher
     let w3 = determineWinner(
       { handRank: HandRank.Pair, tiebreaker: [2, 7, 5, 4] },
       { handRank: HandRank.TwoPairs, tiebreaker: [4, 7, 5, 2] })
-    expect(w3).equals(Winner.PlayerTwo);
+    expect(w3).to.deep.equal({ winner: Winner.PlayerTwo, tiebreaker: [4, 7, 5, 2], handRank: HandRank.TwoPairs });
 
     // p2 tiebreaker higher
     let w4 = determineWinner(
       { handRank: HandRank.TwoPairs, tiebreaker: [7, 3, 2] },
       { handRank: HandRank.TwoPairs, tiebreaker: [8, 3, 4] })
-    expect(w4).equals(Winner.PlayerTwo);
+    expect(w4).to.deep.equal({ winner: Winner.PlayerTwo, tiebreaker: [8, 3, 4], handRank: HandRank.TwoPairs });
 
     // totally same hands
     let w5 = determineWinner(
       { handRank: HandRank.TwoPairs, tiebreaker: [8, 3, 2] },
       { handRank: HandRank.TwoPairs, tiebreaker: [8, 3, 2] })
-    expect(w5).equals(Winner.Tie);
+    expect(w5).to.deep.equal({ winner: Winner.Tie, tiebreaker: [], handRank: HandRank.HighCard });
 
   });
 
@@ -250,12 +250,15 @@ describe("PokerKata Tests", () => {
 
 
   test("play game with same HandRank", () => {
-    expect(playGame(highCardEights, pairOfTwos)).equals(Winner.PlayerTwo);
-    expect(playGame(pairOfTwos, highCardEights)).equals(Winner.PlayerOne);
-    expect(playGame(pairOfTwos, pairOfFours)).equals(Winner.PlayerTwo);
-    expect(playGame(twoPairWithHighOf4, twoPairWithHighOf7)).equals(Winner.PlayerTwo);
-    expect(playGame(twoPairWithHighOf4A, twoPairWithHighOf4B)).equals(Winner.PlayerOne);
-    expect(playGame(pairOfTwosA, pairOfTwosB)).equals(Winner.PlayerTwo);
+    expect(playGame("Black: 2H 3D 5S 9C KD  White: 2C 2H 4S 8C AH")).equals("White wins. - with Pair: 2");
+  });
+  
+//Flush needed HighCard Tiebreaking needs
+  test("printing winner", () => {
+    expect(printWinner({ winner: Winner.PlayerOne, tiebreaker: [2, 8, 4, 14], handRank: HandRank.Pair })).equals("Black wins. - with Pair: 2");
+    expect(printWinner({ winner: Winner.PlayerOne, tiebreaker: [2, 8], handRank: HandRank.FullHouse })).equals("Black wins. - with Full House: 2 over 8");
+    expect(printWinner({ winner: Winner.PlayerTwo, tiebreaker: [2, 8], handRank: HandRank.FullHouse })).equals("White wins. - with Full House: 2 over 8");
+    //expect(printWinner({ winner: Winner.PlayerTwo, tiebreaker: [2, 8], handRank: HandRank.Flush })).equals("White wins. - with Flush.");
   });
 
 });

@@ -1,4 +1,4 @@
-import { parseCard, parseHand, Suit } from "../src/PokerParser";
+import { parseCard, parseHand, splitHands, Suit } from "../src/PokerParser";
 
 const chai = require("chai");
 const expect = chai.expect;
@@ -45,5 +45,10 @@ describe("PokerParser Tests", () => {
         expect(hand[2].suit).equals(Suit.Spades);
         expect(hand[4].value).equals(13);
       });
+
+
+  test("can split both hands from single string", () => {
+    expect(splitHands("Black: 2H 3D 5S 9C KD  White: 2C 3H 4S 8C AH")).to.deep.equal(["2H 3D 5S 9C KD", "2C 3H 4S 8C AH"]);
+  });
     
 });

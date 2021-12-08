@@ -48,3 +48,7 @@ export function parseHand(handString: string): Card[] {
     let hand = cards.map(card => parseCard(card));
     return hand;
 }
+
+export function splitHands(hands: string): string[] {
+    return hands.split("  ").map(x => x.slice(7));
+}

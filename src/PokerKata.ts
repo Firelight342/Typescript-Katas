@@ -1,16 +1,17 @@
-import { Card, parseHand } from "./PokerParser";
+import { platform } from "os";
+import { Card, parseHand, splitHands } from "./PokerParser";
 
 
 export enum HandRank {
-    HighCard = "HighCard",
+    HighCard = "High Card",
     Pair = "Pair",
-    TwoPairs = "TwoPairs",
-    ThreeOfAKind = "ThreeOfAKind",
+    TwoPairs = "Two Pairs",
+    ThreeOfAKind = "Three Of A Kind",
     Straight = "Straight",
     Flush = "Flush",
-    FullHouse = "FullHouse",
-    FourOfAKind = "FourOfAKind",
-    StraightFlush = "StraightFlush",
+    FullHouse = "Full House",
+    FourOfAKind = "Four Of A Kind",
+    StraightFlush = "Straight Flush",
 }
 export interface RankMatch {
     isMatch: boolean
@@ -150,12 +151,6 @@ function appendTieBreakers(hand: Card[], rankValues: number[]) {
     return rankValues.concat(remainedCards);
 }
 
-export enum Winner {
-    PlayerOne = "PlayerOne",
-    PlayerTwo = "Player Two",
-    Tie = "Tie"
-}
-
 const handRanks = {
     [HandRank.HighCard]: 1,
     [HandRank.Pair]: 2,
@@ -168,33 +163,64 @@ const handRanks = {
     [HandRank.StraightFlush]: 9,
 }
 
+export enum Winner {
+    PlayerOne = "PlayerOne",
+    PlayerTwo = "Player Two",
+    Tie = "Tie"
+}
+
+export interface WinnerInfo {
+    winner: Winner;
+    tiebreaker: number[];
+    handRank: HandRank;
+}
+
 // determine winner from two RankedHands
-export function determineWinner(player1: RankedHand, player2: RankedHand): Winner {
+export function determineWinner(player1: RankedHand, player2: RankedHand): WinnerInfo {
     if (handRanks[player1.handRank] > handRanks[player2.handRank]) {
-        return Winner.PlayerOne
+        return { winner: Winner.PlayerOne, tiebreaker: player1.tiebreaker, handRank: player1.handRank };
     }
     if (handRanks[player1.handRank] < handRanks[player2.handRank]) {
-        return Winner.PlayerTwo
+        return { winner: Winner.PlayerTwo, tiebreaker: player2.tiebreaker, handRank: player2.handRank };
     }
     if (handRanks[player1.handRank] === handRanks[player2.handRank]) {
         if (player1.tiebreaker > player2.tiebreaker) {
-            return Winner.PlayerOne;
+            return { winner: Winner.PlayerOne, tiebreaker: player1.tiebreaker, handRank: player1.handRank };
         }
         if (player1.tiebreaker < player2.tiebreaker) {
-            return Winner.PlayerTwo;
+            return { winner: Winner.PlayerTwo, tiebreaker: player2.tiebreaker, handRank: player2.handRank };
         }
-        return Winner.Tie;
+        return { winner: Winner.Tie, tiebreaker: [], handRank: HandRank.HighCard };
     }
-    return Winner.Tie; // impossible, but needed for typesystem
+    return { winner: Winner.Tie, tiebreaker: [], handRank: HandRank.HighCard };
+    // impossible, but needed for typesystem
 }
 
-
 // orchestration of all helpers     (parse, transform, calc.)
-export function playGame(player1String: string, player2String: string): Winner {
-    let player1 = detectHand(parseHand(player1String))
-    let player2 = detectHand(parseHand(player2String))
+export function playGame(playersHand: string): string {
+    let [player1, player2] = splitHands(playersHand).map(x => detectHand(parseHand(x)))
+    return printWinner(determineWinner(player1, player2));
+}
 
-    return determineWinner(player1, player2);
+//Flush needed HighCard Tiebreaking needs
+export function printWinner(winnerInfo: WinnerInfo): string {
+    let player = ""
+    if (winnerInfo.winner === "PlayerOne") {
+        player = "Black"
+    }
+    else {
+        player = "White"
+    }
+    if (winnerInfo.handRank === "Full House") {
+        return player + " wins. - with " + winnerInfo.handRank
+            + ": " + winnerInfo.tiebreaker[0] + " over " + winnerInfo.tiebreaker[1]
+    }
+    if (winnerInfo.winner != Winner.Tie) {
+        return player + " wins. - with " + winnerInfo.handRank + ": " + winnerInfo.tiebreaker[0]
+    }
+    else {
+        return "Tie."
+    }
 }
 
 // SOLID patterns / principals
