@@ -202,10 +202,13 @@ describe("PokerKata Tests", () => {
     expect(detectHand(parseHand("2H 2H 2D 5H 6H")).tiebreaker).to.deep.equals([2, 6, 5]);
     expect(detectHand(parseHand("4H 4H 4D 4H 6H")).tiebreaker).to.deep.equals([4, 6]);
     expect(detectHand(parseHand("2H 3H 4D 5H 6H")).tiebreaker).to.deep.equals([6, 5, 4, 3, 2]);
+
     expect(detectHand(parseHand("2H 3H 7H 5H 6H")).tiebreaker).to.deep.equals([7, 6, 5, 3, 2]);
+
     expect(detectHand(parseHand("2H 2H 3H 3H 3D")).tiebreaker).to.deep.equals([3, 2, 2]);
     expect(detectHand(parseHand("2H 3H 4H 5H 6H")).tiebreaker).to.deep.equals([6, 5, 4, 3, 2]);
-    expect(detectHand(parseHand("8H 3D 4H 5S 6H")).tiebreaker).to.deep.equals([8, 6, 5, 4, 3]);
+
+    expect(detectHand(parseHand("5H 3D 4H TS 6H")).tiebreaker).to.deep.equals([10, 6, 5, 4, 3]);
 
   });
 
@@ -251,14 +254,17 @@ describe("PokerKata Tests", () => {
 
   test("play game with same HandRank", () => {
     expect(playGame("Black: 2H 3D 5S 9C KD  White: 2C 2H 4S 8C AH")).equals("White wins. - with Pair: 2");
+    expect(playGame("Black: 2H 3D 5S 9C KD  White: 2C 3H 4S 8C AH")).equals("White wins. - with High Card: Ace");
   });
-  
-//Flush needed HighCard Tiebreaking needs
+
+  // HighCard Tiebreaking needs
   test("printing winner", () => {
     expect(printWinner({ winner: Winner.PlayerOne, tiebreaker: [2, 8, 4, 14], handRank: HandRank.Pair })).equals("Black wins. - with Pair: 2");
     expect(printWinner({ winner: Winner.PlayerOne, tiebreaker: [2, 8], handRank: HandRank.FullHouse })).equals("Black wins. - with Full House: 2 over 8");
     expect(printWinner({ winner: Winner.PlayerTwo, tiebreaker: [2, 8], handRank: HandRank.FullHouse })).equals("White wins. - with Full House: 2 over 8");
-    //expect(printWinner({ winner: Winner.PlayerTwo, tiebreaker: [2, 8], handRank: HandRank.Flush })).equals("White wins. - with Flush.");
+    expect(printWinner({ winner: Winner.PlayerTwo, tiebreaker: [12, 14], handRank: HandRank.FullHouse })).equals("White wins. - with Full House: Queen over Ace");
+    expect(printWinner({ winner: Winner.PlayerTwo, tiebreaker: [2, 8], handRank: HandRank.Flush })).equals("White wins. - with Flush.");
+    expect(printWinner({ winner: Winner.PlayerOne, tiebreaker: [11, 6, 5, 4, 3], handRank: HandRank.HighCard })).equals("Black wins. - with High Card: Jack");
   });
 
 });

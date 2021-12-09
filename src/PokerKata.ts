@@ -146,8 +146,7 @@ function appendTieBreakers(hand: Card[], rankValues: number[]) {
     let remainedCards = hand
         .map(x => x.value)
         .filter(x => !rankValues.includes(x))
-        .sort()
-        .reverse();
+        .sort((a, b) => b - a);
     return rankValues.concat(remainedCards);
 }
 
@@ -202,7 +201,7 @@ export function playGame(playersHand: string): string {
     return printWinner(determineWinner(player1, player2));
 }
 
-//Flush needed HighCard Tiebreaking needs
+//HighCard Tiebreaking needs
 export function printWinner(winnerInfo: WinnerInfo): string {
     let player = ""
     if (winnerInfo.winner === "PlayerOne") {
@@ -211,17 +210,43 @@ export function printWinner(winnerInfo: WinnerInfo): string {
     else {
         player = "White"
     }
+
     if (winnerInfo.handRank === "Full House") {
         return player + " wins. - with " + winnerInfo.handRank
-            + ": " + winnerInfo.tiebreaker[0] + " over " + winnerInfo.tiebreaker[1]
+            + ": " + winningCard(winnerInfo.tiebreaker[0]) + " over " + winningCard(winnerInfo.tiebreaker[1])
+    }
+    if (winnerInfo.handRank === "Flush") {
+        return player + " wins. - with " + winnerInfo.handRank
+            + "."
     }
     if (winnerInfo.winner != Winner.Tie) {
-        return player + " wins. - with " + winnerInfo.handRank + ": " + winnerInfo.tiebreaker[0]
+        return player + " wins. - with " + winnerInfo.handRank + ": " + winningCard(winnerInfo.tiebreaker[0])
     }
     else {
         return "Tie."
     }
 }
+
+//need a better name
+function winningCard(input: number) {
+    if (input === 10) {
+        return "Ten"
+    }
+    if (input === 11) {
+        return "Jack"
+    }
+    if (input === 12) {
+        return "Queen"
+    }
+    if (input === 13) {
+        return "King"
+    }
+    if (input === 14) {
+        return "Ace"
+    }
+    return input;
+}
+
 
 // SOLID patterns / principals
 // S - (easy to test) Single responsibility principal
