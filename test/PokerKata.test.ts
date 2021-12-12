@@ -1,7 +1,7 @@
 import {
   determineWinner, detectHand, HandRank, isFullHouse, isThreeOfAKind,
   isTwoPair, isStraight, isFourOfAKind,
-  isFlush, isStraightFlush, Winner, playGame, isPair, splitHands, printWinner
+  isFlush, isStraightFlush, Winner, playGame, isPair, printWinner
 } from "../src/PokerKata";
 import { Card, parseHand, Suit } from "../src/PokerParser";
 

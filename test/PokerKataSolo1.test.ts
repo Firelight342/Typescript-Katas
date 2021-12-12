@@ -1,22 +1,30 @@
-import { parseCard, parseHand, Suit } from "../src/PokerKataSolo1";
+import { isPair } from "../src/PokerKataSolo1";
+import { parseCard, parseHand, Suit } from "../src/PokerParserSolo1";
 
 const chai = require("chai");
 const expect = chai.expect;
 
 describe("PokerKata1 Tests", () => {
 
-    test("can correctly parse a card", () => {
-        expect(parseCard("3H").value).equal(3);
-        expect(parseCard("3H").suit).equal(Suit.Hearts);
-        expect(parseCard("AS").value).equal(14);
-        expect(parseCard("AS").suit).equal(Suit.Spades);
+    test("can detect a pair", () => {
+        let hand = [
+            { suit: Suit.Clubs, value: 4 },
+            { suit: Suit.Clubs, value: 2 },
+            { suit: Suit.Clubs, value: 3 },
+            { suit: Suit.Clubs, value: 4 },
+            { suit: Suit.Clubs, value: 5 }
+        ]
+        expect(isPair(hand)).equals(true)
     });
+    test("can detect a non pair", () => {
+        let hand = [
+            { suit: Suit.Clubs, value: 4 },
+            { suit: Suit.Clubs, value: 2 },
+            { suit: Suit.Clubs, value: 3 },
+            { suit: Suit.Clubs, value: 9 },
+            { suit: Suit.Clubs, value: 5 }
+        ]
 
-    test("can parse cards in a hand", () => {
-        let hand = parseHand("2H 3D 5S 9C KD")
-        expect(hand[0].suit).equals(Suit.Hearts);
-        expect(hand[2].suit).equals(Suit.Spades);
-        expect(hand[4].value).equals(13);
-      });
-
+        expect(isPair(hand)).equals(false)
+    });
 });

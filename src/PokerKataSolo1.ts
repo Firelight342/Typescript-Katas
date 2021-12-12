@@ -1,74 +1,43 @@
-import { parse } from "path";
-import { splitHands } from "./PokerParser";
+import { log } from "console";
+import { Card } from "../src/PokerParserSolo1"
 
-export enum Suit {
-    Clubs,
-    Diamonds,
-    Hearts,
-    Spades
+
+function repeatCard(hand: Card[]) {
+    let numberOfTimes: number[] =
+        hand.map((card: Card) => card.value)
+            .reduce((previousVal: any, currentVal) => {
+                if (previousVal[currentVal]) {
+                    previousVal[currentVal] += 1
+                }
+                else {
+                    previousVal[currentVal] = 1
+                }
+                return previousVal;
+            }, {})
+    return numberOfTimes;
 }
 
-export interface Card {
-    suit: Suit
-    value: number
+function countPairs(hand: Card[], pairSize: number): number {
+    let numberCounts = repeatCard(hand);
+    let pairValues = Object.values(numberCounts).filter(x => x === pairSize);
+    let numberOfPairs = pairValues.length
+
+    return numberOfPairs;
 }
 
-export function parseValue(value: string): number {
-    let cardValue = parseInt(value);
-    if (value === "T") {
-        return 10;
-    }
-    if (value === "J") {
-        return 11;
-    }
-    if (value === "Q") {
-        return 12;
-    }
-    if (value === "K") {
-        return 13;
-    }
-    if (value === "A") {
-        return 14;
-    }
-    return cardValue;
+export function isPair(hand: Card[]): boolean {
+    return countPairs(hand, 2) === 1;
 }
 
-export function parseSuit(suit: string): Suit {
-    if (suit === "D") {
-        return Suit.Diamonds;
-    }
-    if (suit === "C") {
-        return Suit.Clubs;
-    }
-    if (suit === "S") {
-        return Suit.Spades;
-    }
-    return Suit.Hearts;
-}
-
-export function parseCard(card: string): Card {
-    let value = parseValue(card[0])
-    let suit = parseSuit(card[1])
-    return { suit: suit, value: value };
-}
-
-export function parseHand(handString: string): Card[] {
-    let splitHand = handString.split(" ") 
-    let hand= splitHand.map(x => parseCard(x))
-    return hand;
-}
-
-
-/*What I need for this
-take hand and split value and suit
-turn t,j,q,k,a into numbers
-a card interface: value and suit
-value is a number suit is a enum option
+/*What I need for next
+playGame (input: Black: 2H 3D 5S 9C KD  White: 2C 3H 4S 8C AH) (output: White wins. - with high card: Ace)
+detectHand (input: [2H 3D 5S 9C KD]) (output: handRank, valueRank(only needed for flush/straightFlush))
+isFullHouse ()
 */
 
-//         FFF          playGame
+//         FFF          playGame 
 //         FFFFFF    detectHand                                      |                parseHand                 
-//      isFullHouse            isStraightFlush   appendTieBreakers   |             parseCard    parseSuit 
+//      isFullHouse    isStraightFlush   appendTieBreakers           |             parseCard    parseSuit 
 //      isFlush   isStraight  isPair isTwoPair                       | 
-//      countPairsWithValues                                         |      
-//      countBy                            determineWinner           |   
+//              countPairsWithValues                                 |      
+//                  countBy                determineWinner           |   

@@ -1,3 +1,4 @@
+import { count } from "console";
 import { platform } from "os";
 import { Card, parseHand, splitHands } from "./PokerParser";
 
