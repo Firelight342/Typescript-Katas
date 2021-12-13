@@ -57,7 +57,6 @@ function countPairsWithValues(hand: Card[], pairSize: number): FaceValuesWithNum
     let faceValuesWithPairs = Object.keys(numberCounts)
         .filter(faceValue => numberCounts[faceValue] === pairSize);
     let numberOfPairs = faceValuesWithPairs.length;
-
     return {
         countOfPairs: numberOfPairs,
         pairValues: (faceValuesWithPairs.map(x => parseInt(x)).sort().reverse())
