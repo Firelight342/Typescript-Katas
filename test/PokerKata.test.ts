@@ -13,7 +13,7 @@ const expect = chai.expect;
 describe("PokerKata Tests", () => {
 
 
-  test.only("can detect a pair", () => {
+  test("can detect a pair", () => {
     let hand: Card[] = [
       { suit: Suit.Clubs, value: 4 },
       { suit: Suit.Clubs, value: 2 },
