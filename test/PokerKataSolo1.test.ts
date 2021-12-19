@@ -1,4 +1,4 @@
-import { isFourOfAKind, isPair, isThreeOfAKind, isTwoPair, isFlush, isFullHouse } from "../src/PokerKataSolo1";
+import { isFourOfAKind, isPair, isThreeOfAKind, isTwoPair, isFlush, isFullHouse, isStraight, isStraightFlush } from "../src/PokerKataSolo1";
 import { parseCard, parseHand, Suit } from "../src/PokerParserSolo1";
 
 const chai = require("chai");
@@ -47,7 +47,16 @@ describe("PokerKata1 Tests", () => {
         ]
         expect(isThreeOfAKind(hand)).to.deep.equal({ isMatch: true, rankValues: [5] })
     });
-
+    test("can detect Straight", () => {
+        let hand = [
+            { suit: Suit.Hearts, value: 9 },
+            { suit: Suit.Clubs, value: 5 },
+            { suit: Suit.Hearts, value: 6 },
+            { suit: Suit.Clubs, value: 8 },
+            { suit: Suit.Clubs, value: 7 }
+        ]
+        expect(isStraight(hand)).to.deep.equal({ isMatch: true, rankValues: [] })
+    });
     test("can detect Flush", () => {
         let hand = [
             { suit: Suit.Clubs, value: 4 },
@@ -78,4 +87,15 @@ describe("PokerKata1 Tests", () => {
         ]
         expect(isFourOfAKind(hand)).to.deep.equal({ isMatch: true, rankValues: [5] })
     });
+    test("can detect StraightFlush", () => {
+        let hand = [
+            { suit: Suit.Clubs, value: 5 },
+            { suit: Suit.Clubs, value: 4 },
+            { suit: Suit.Clubs, value: 6 },
+            { suit: Suit.Clubs, value: 3 },
+            { suit: Suit.Clubs, value: 7 }
+        ]
+        expect(isStraightFlush(hand)).to.deep.equal({ isMatch: true, rankValues: [] })
+    });
+
 });

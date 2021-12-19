@@ -23,7 +23,7 @@ interface RankAndValues {
     rankValues: number[]
 }
 
-function repeatCard(hand: Card[], fn: (card:Card) => any):any {
+function repeatCard(hand: Card[], fn: (card: Card) => any): any {
     let numberOfTimes =
         hand.map(fn)
             .reduce((previousVal: any, currentVal) => {
@@ -38,7 +38,7 @@ function repeatCard(hand: Card[], fn: (card:Card) => any):any {
     return numberOfTimes;
 }
 
-function countValues(hand:Card[]){
+function countValues(hand: Card[]) {
     return repeatCard(hand, (card: Card) => card.value);
 }
 
@@ -68,27 +68,31 @@ export function isThreeOfAKind(hand: Card[]): RankAndValues {
     return { isMatch: isThreeOfAKind, rankValues: handRank.pairValues }
 }
 
-//Straight 
+export function isStraight(hand: Card[]):RankAndValues {
+    let sortedCardValues = Object.keys(countValues(hand)).sort().reverse();
+    let lowestVal:any = sortedCardValues[sortedCardValues.length - 1]
+    let highestVal:any = sortedCardValues[0]
+    let are4Apart =(highestVal-lowestVal===4)
 
-
+    let handHasNoRepeats = Object.values(countValues(hand)).filter(x => x ===1).length ===5;
+    return{isMatch: (are4Apart&&handHasNoRepeats), rankValues:[]}
+}
 export function isFlush(hand: Card[]): RankAndValues {
-    let isAFlush = repeatCard(hand, (card: Card) => card.suit)
-    return  { isMatch: (Object.keys(isAFlush).length ===1), rankValues: []}; 
+    let isFlush = repeatCard(hand, (card: Card) => card.suit)
+    return { isMatch: (Object.keys(isFlush)).length === 1, rankValues: [] }
 }
 export function isFullHouse(hand: Card[]): RankAndValues {
     let handRankOf3 = countPairs(hand, 3);
-    let isThreeOfAKind = handRankOf3.numberOfPairs === 1;
-    let handRankOf2 = countPairs(hand, 2);
-    let isPair = handRankOf2.numberOfPairs === 1;
-    return  { isMatch: isThreeOfAKind && isPair === true, rankValues: handRankOf3.pairValues}; 
+    return { isMatch: isThreeOfAKind(hand).isMatch && isPair(hand).isMatch, rankValues: handRankOf3.pairValues };
 }
 export function isFourOfAKind(hand: Card[]): RankAndValues {
     let handRank = countPairs(hand, 4);
     let isFourOfAKind = handRank.numberOfPairs === 1;
     return { isMatch: isFourOfAKind, rankValues: handRank.pairValues }
 }
-
-//StraightFlush
+export function isStraightFlush(hand:Card[]):RankAndValues{
+    return{isMatch: isStraight(hand).isMatch&&isFlush(hand).isMatch,rankValues:[]}
+}
 
 
 /*What I need for next
