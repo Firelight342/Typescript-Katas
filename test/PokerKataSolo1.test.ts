@@ -99,7 +99,14 @@ describe("PokerKata1 Tests", () => {
     });
 
     test("can detectHand", () => {
+        expect(detectHand(parseHand("2H 2H 3D 4H 7H")).handRank).equals(HandRank.Pair);
         expect(detectHand(parseHand("2H 2H 4D 4H 7H")).handRank).equals(HandRank.TwoPair);
+        expect(detectHand(parseHand("2H 2H 2D 4H 7H")).handRank).equals(HandRank.ThreeOfAKind);
+        expect(detectHand(parseHand("2H 5H 3D 4H 6H")).handRank).equals(HandRank.Straight);
+        expect(detectHand(parseHand("2H 2H 3H 4H 7H")).handRank).equals(HandRank.Flush);
+        expect(detectHand(parseHand("2H 2H 2H 2H 7H")).handRank).equals(HandRank.FourOfAKind);
+        expect(detectHand(parseHand("2H 2H 2H 4D 4H")).handRank).equals(HandRank.FullHouse);
+        expect(detectHand(parseHand("2H 5H 3H 4H 6H")).handRank).equals(HandRank.StraightFlush);
     });
 
 });

@@ -99,29 +99,30 @@ export interface RankAndTieBreaker {
     tieBreaker: number[]
 }
 export function detectHand(hand: Card[]): RankAndTieBreaker {
-    if (isPair(hand).isMatch) {
-        return { handRank: HandRank.Pair, tieBreaker: [] };
-    }
-    if (isTwoPair(hand).isMatch) {
-        return { handRank: HandRank.TwoPair, tieBreaker: [] };
-    }
-    if (isThreeOfAKind(hand).isMatch) {
-        return { handRank: HandRank.ThreeOfAKind, tieBreaker: [] };
-    }
-    if (isStraight(hand).isMatch) {
-        return { handRank: HandRank.Straight, tieBreaker: [] };
-    }
-    if (isFlush(hand).isMatch) {
-        return { handRank: HandRank.Flush, tieBreaker: [] };
-    }
-    if (isFourOfAKind(hand).isMatch) {
-        return { handRank: HandRank.FourOfAKind, tieBreaker: [] };
+    
+    if (isStraightFlush(hand).isMatch) {
+        return { handRank: HandRank.StraightFlush, tieBreaker: [] };
     }
     if (isFullHouse(hand).isMatch) {
         return { handRank: HandRank.FullHouse, tieBreaker: [] };
     }
-    if (isStraightFlush(hand).isMatch) {
-        return { handRank: HandRank.StraightFlush, tieBreaker: [] };
+    if (isFourOfAKind(hand).isMatch) {
+        return { handRank: HandRank.FourOfAKind, tieBreaker: [] };
+    }
+    if (isFlush(hand).isMatch) {
+        return { handRank: HandRank.Flush, tieBreaker: [] };
+    }
+    if (isStraight(hand).isMatch) {
+        return { handRank: HandRank.Straight, tieBreaker: [] };
+    }
+    if (isThreeOfAKind(hand).isMatch) {
+        return { handRank: HandRank.ThreeOfAKind, tieBreaker: [] };
+    }
+    if (isTwoPair(hand).isMatch) {
+        return { handRank: HandRank.TwoPair, tieBreaker: [] };
+    }
+    if (isPair(hand).isMatch) {
+        return { handRank: HandRank.Pair, tieBreaker: [] };
     }
     return { handRank: HandRank.HighCard, tieBreaker: [] };
 }
