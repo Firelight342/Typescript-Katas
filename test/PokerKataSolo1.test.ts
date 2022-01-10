@@ -109,4 +109,16 @@ describe("PokerKata1 Tests", () => {
         expect(detectHand(parseHand("2H 5H 3H 4H 6H")).handRank).equals(HandRank.StraightFlush);
     });
 
+    test.only("can detect tiebreaker", () => {
+        expect(detectHand(parseHand("2H 2S 3D 4D 7D")).tieBreaker).to.deep.equal([2, 7, 4, 3]);
+        expect(detectHand(parseHand("7H 2S 4D 4D 7D")).tieBreaker).to.deep.equal([7, 4, 2]);
+        expect(detectHand(parseHand("2H 2H 2D 5H 6H")).tieBreaker).to.deep.equals([2, 6, 5]);
+        expect(detectHand(parseHand("4H 4H 4D 4H 6H")).tieBreaker).to.deep.equals([4, 6]);
+        expect(detectHand(parseHand("2H 3H 4D 5H 6H")).tieBreaker).to.deep.equals([6, 5, 4, 3, 2]);
+        expect(detectHand(parseHand("2H 3H 7H 5H 6H")).tieBreaker).to.deep.equals([7, 6, 5, 3, 2]);
+        expect(detectHand(parseHand("2H 2H 3H 3H 3D")).tieBreaker).to.deep.equals([3, 2, 2]);
+        expect(detectHand(parseHand("2H 3H 4H 5H 6H")).tieBreaker).to.deep.equals([6, 5, 4, 3, 2]);
+        expect(detectHand(parseHand("5H 3D 4H TS 6H")).tieBreaker).to.deep.equals([10, 6, 5, 4, 3]);
+    });
+
 });

@@ -1,5 +1,6 @@
 import { log } from "console";
 import { Card } from "../src/PokerParserSolo1"
+import { parseHand } from "./PokerParser";
 
 export enum HandRank {
     HighCard = "High Card",
@@ -99,32 +100,47 @@ export interface RankAndTieBreaker {
     tieBreaker: number[]
 }
 export function detectHand(hand: Card[]): RankAndTieBreaker {
-    
-    if (isStraightFlush(hand).isMatch) {
-        return { handRank: HandRank.StraightFlush, tieBreaker: [] };
+    let handInfoSF = isStraightFlush(hand);
+    if (handInfoSF.isMatch) {
+        return { handRank: HandRank.StraightFlush, tieBreaker: getTiebreaker(hand, handInfoSF.rankValues) };
     }
-    if (isFullHouse(hand).isMatch) {
-        return { handRank: HandRank.FullHouse, tieBreaker: [] };
+    let handInfoFH = isFullHouse(hand)
+    if (handInfoFH.isMatch) {
+        return { handRank: HandRank.FullHouse, tieBreaker: getTiebreaker(hand, handInfoFH.rankValues) };
     }
-    if (isFourOfAKind(hand).isMatch) {
-        return { handRank: HandRank.FourOfAKind, tieBreaker: [] };
+    let handInfo4oK = isFourOfAKind(hand)
+    if (handInfo4oK.isMatch) {
+        return { handRank: HandRank.FourOfAKind, tieBreaker: getTiebreaker(hand, handInfo4oK.rankValues) };
     }
-    if (isFlush(hand).isMatch) {
-        return { handRank: HandRank.Flush, tieBreaker: [] };
+    let handInfoF = isFlush(hand)
+    if (handInfoF.isMatch) {
+        return { handRank: HandRank.Flush, tieBreaker: getTiebreaker(hand, handInfoF.rankValues) };
     }
-    if (isStraight(hand).isMatch) {
-        return { handRank: HandRank.Straight, tieBreaker: [] };
+    let handInfoS = isStraight(hand)
+    if (handInfoS.isMatch) {
+        return { handRank: HandRank.Straight, tieBreaker: getTiebreaker(hand, handInfoS.rankValues) };
     }
-    if (isThreeOfAKind(hand).isMatch) {
-        return { handRank: HandRank.ThreeOfAKind, tieBreaker: [] };
+    let handInfoPo3 = isThreeOfAKind(hand)
+    if (handInfoPo3.isMatch) {
+        return { handRank: HandRank.ThreeOfAKind, tieBreaker: getTiebreaker(hand, handInfoPo3.rankValues) };
     }
-    if (isTwoPair(hand).isMatch) {
-        return { handRank: HandRank.TwoPair, tieBreaker: [] };
+    let handInfoPo2 = isTwoPair(hand)
+    if (handInfoPo2.isMatch) {
+        return { handRank: HandRank.TwoPair, tieBreaker: getTiebreaker(hand, handInfoPo2.rankValues) };
     }
-    if (isPair(hand).isMatch) {
-        return { handRank: HandRank.Pair, tieBreaker: [] };
+    let handInfoP = isPair(hand);
+    if (handInfoP.isMatch) {
+        return { handRank: HandRank.Pair, tieBreaker: getTiebreaker(hand, handInfoPo2.rankValues) };
     }
-    return { handRank: HandRank.HighCard, tieBreaker: [] };
+    return { handRank: HandRank.HighCard, tieBreaker: getTiebreaker(hand, []) };
+}
+
+
+function getTiebreaker(hand: Card[], rankVlaues: number[]) {
+    let sortedCardValues = hand.map(x => x.value)
+        .filter(x => !rankVlaues.includes(x))
+        .sort((a, b) => b - a);
+    return rankVlaues.concat(sortedCardValues);
 }
 
 /*What I need for next
@@ -133,9 +149,9 @@ detectHand (input: [2H 3D 5S 9C KD]) (output: handRank, valueRank)
 isFullHouse ()
 */
 
-//         FFF          playGame 
-//         FFFFFF    detectHand                                      |                parseHand                 
-//      isFullHouse    isStraightFlush   appendTieBreakers           |             parseCard    parseSuit 
-//      isFlush   isStraight  isPair isTwoPair                       | 
-//              countPairsWithValues                                 |      
+//         FFF          playGame
+//         FFFFFF    detectHand                                      |                parseHand
+//      isFullHouse    isStraightFlush   appendTieBreakers           |             parseCard    parseSuit
+//      isFlush   isStraight  isPair isTwoPair                       |
+//              countPairsWithValues                                 |
 //                  countBy                determineWinner           |   
